@@ -22,6 +22,7 @@ public class Staff{
     public String getFirstName(){
         return fistName;
     }
+    
     @Override
     public String toString(){
         return this.fistName + this.lastName + "," + this.employeeID;
