@@ -23,7 +23,13 @@ public class Restaurant {
         maxCapacity = 0; // For now
         currCapacity = 0;
     }
-    
+
+    public String getRestaurantName() { return restaurantName; }    // Get name
+
+    public int getMaxRestaurantCapacity() { return maxCapacity; }   // Get max capaciy
+
+    public int getCurrRestaurantCapacity() { return currCapacity; } // Get people inside
+
     // Will add prechecks depending on implementation of max capacity
     public void seatPeople(int people) {
         int possibleSeats = 0;
