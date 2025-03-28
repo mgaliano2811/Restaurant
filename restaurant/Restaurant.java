@@ -23,7 +23,7 @@ public class Restaurant {
         maxCapacity = 0; // For now
         currCapacity = 0;
     }
-
+    
     // Will add prechecks depending on implementation of max capacity
     public void seatPeople(int people) {
         int possibleSeats = 0;
