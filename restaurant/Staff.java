@@ -1,30 +1,31 @@
 public class Staff{
-    //This class is desi
     //protected methods as child classes need access(inherence)
     protected final String lastName;
-    protected final String fistName;
+    protected final String firstName;
     protected final int employeeID;
-    //????????protected String password;
 
     //constructor method
-    public Staff(String lastName, String fistName, int employeeID, String password) {
+    public Staff(String lastName, String firstName, int employeeID) {
         this.lastName = lastName;
-        this.fistName = fistName;
+        this.firstName = firstName;
         this.employeeID = employeeID;
-        //??????this.password = password;
     }
 
     //getters
     public String getLastName(){
-        return fistName;
+        return firstName;
     }
 
     public String getFirstName(){
-        return fistName;
+        return firstName;
     }
-    
+
+    public int getEmloyeeID(){
+        return employeeID;
+    }
+
     @Override
     public String toString(){
-        return this.fistName + this.lastName + "," + this.employeeID;
+        return this.firstName + this.lastName + "," + this.employeeID;
     }
 }  

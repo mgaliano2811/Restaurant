@@ -1,7 +1,9 @@
+import java.util.ArrayList;
+
 public class Waiter extends Staff{
-    private Table table;
-    public Waiter(String lastName, String fistName, int employeeID, String password){
-        super(lastName, fistName, employeeID, password);
+    private ArrayList<Table> assignedTables;
+    public Waiter(String lastName, String firstName, int employeeID){
+        super(lastName, firstName, employeeID);
     }
     @Override
     public String toString() { return super.toString() + "(Waiter)";}
