@@ -7,9 +7,20 @@ public class Menu {
 
     private HashMap<String, MenuItem> menuItems;
 
+    // Constructor to initialize the menu from a default file path
     public Menu() {
         this.menuItems = new HashMap<>();
-        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader("./menu/Menu.txt"))) {
+        parseMenuFile("./menu/Menu.txt");
+    }
+
+    // Constructor to initialize the menu from a specified file path
+    public Menu(String filePath) {
+        this.menuItems = new HashMap<>();
+        parseMenuFile(filePath);
+    }
+
+    private void parseMenuFile(String filePath) {
+        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",", 4);
@@ -80,8 +91,10 @@ public class Menu {
         }
     }
 
-    public void printMenu() {
+    @Override
+    public String toString() {
         HashMap<String, ArrayList<MenuItem>> groupedMenu = new HashMap<>();
+        String out = "";
         for (MenuItem item : menuItems.values()) {
             String type = item.getItemType().toString();
             if (!groupedMenu.containsKey(type)) {
@@ -90,83 +103,11 @@ public class Menu {
             groupedMenu.get(type).add(item);
         }
         for (String type : groupedMenu.keySet()) {
-                System.out.println("Type: " + type);
+            out += "Type: " + type + "\n";
             for (MenuItem item : groupedMenu.get(type)) {
-                System.out.println("\t" + item);
+                out += "\t" + item + "\n";
             }
         }
+        return out;
     }
-
-    // Main Method just to show how the Menu class can be used in a simple console application.
-    // This is not part of the Menu class itself but included here for demonstration.
-    public static void main(String[] args) {
-    Menu menu = new Menu();
-    java.util.Scanner scanner = new java.util.Scanner(System.in);
-
-    while (true) {
-        System.out.println("\nMenu Management System");
-        System.out.println("1. View Full Menu");
-        System.out.println("2. View Menu by Type");
-        System.out.println("3. Add Menu Item");
-        System.out.println("4. Remove Menu Item");
-        System.out.println("5. Update Menu Item");
-        System.out.println("6. Exit");
-        System.out.print("Enter your choice: ");
-        
-        int choice = scanner.nextInt();
-        scanner.nextLine();
-
-        switch (choice) {
-            case 1:
-                menu.printMenu();
-                break;
-            case 2:
-                System.out.print("Enter item type: ");
-                String type = scanner.nextLine();
-                try {
-                    ItemType itemType = ItemType.valueOf(type.toUpperCase());
-                    HashMap<String, MenuItem> filteredMenu = menu.getMenuByType(itemType);
-                    filteredMenu.values().forEach(System.out::println);
-                } catch (IllegalArgumentException e) {
-                    System.err.println("Invalid item type.");
-                }
-                break;
-            case 3:
-                System.out.print("Enter item name: ");
-                String name = scanner.nextLine();
-                System.out.print("Enter item type: ");
-                String itemType = scanner.nextLine();
-                System.out.print("Enter item price: ");
-                double price = scanner.nextDouble();
-                scanner.nextLine(); // Consume newline
-                System.out.print("Enter item description: ");
-                String description = scanner.nextLine();
-                menu.addMenuItem(name, itemType, price, description);
-                break;
-            case 4:
-                System.out.print("Enter item name to remove: ");
-                String removeName = scanner.nextLine();
-                menu.removeMenuItem(removeName);
-                break;
-            case 5:
-                System.out.print("Enter item name to update: ");
-                String updateName = scanner.nextLine();
-                System.out.print("Enter new item type: ");
-                String newItemType = scanner.nextLine();
-                System.out.print("Enter new item price: ");
-                double newPrice = scanner.nextDouble();
-                scanner.nextLine(); // Consume newline
-                System.out.print("Enter new item description: ");
-                String newDescription = scanner.nextLine();
-                menu.updateMenuItem(updateName, newItemType, newPrice, newDescription);
-                break;
-            case 6:
-                System.out.println("Exiting...");
-                scanner.close();
-                return;
-            default:
-                System.err.println("Invalid choice. Please try again.");
-        }
-    }
-}
 }
