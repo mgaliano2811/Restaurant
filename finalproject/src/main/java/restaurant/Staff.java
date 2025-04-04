@@ -1,3 +1,5 @@
+package restaurant;
+
 public class Staff{
     //protected methods as child classes need access(inherence)
     protected final String lastName;

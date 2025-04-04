@@ -1,3 +1,5 @@
+package restaurant;
+
 import java.util.ArrayList;
 
 public class Waiter extends Staff{

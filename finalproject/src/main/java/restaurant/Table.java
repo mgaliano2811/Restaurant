@@ -1,3 +1,5 @@
+package restaurant;
+
 public class Table {
     private int maxCapacity;        // People we can sit on the table
     private int currCapacity;       // No of people actually seated in the table
