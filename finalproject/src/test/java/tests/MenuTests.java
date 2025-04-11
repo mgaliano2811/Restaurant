@@ -1,6 +1,8 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,8 +10,6 @@ import restaurant.menu.ItemType;
 import restaurant.menu.Menu;
 import restaurant.menu.MenuItem;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 
 public class MenuTests {
@@ -17,17 +17,19 @@ public class MenuTests {
 
     @BeforeEach
     public void setUp() {
-        try (PrintWriter writer = new PrintWriter("./menu/TestMenu.txt")) {
-            writer.print("");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        menu = new Menu("./menu/TestMenu.txt");
+        menu = new Menu("./src/test/java/tests/TestMenu.txt");
+    }
+
+    @Test
+    public void testMenuDefaultLoading() {
+        assertDoesNotThrow(() -> {
+            menu = new Menu();
+        });
     }
     
     @Test
     public void TestMenuLoading() {
-    	menu = new Menu("./menu/TestMenuLoading.txt");
+    	menu = new Menu("./src/test/java/tests/TestMenuLoading.txt");
     	assertEquals(1, menu.getMenu().size());
     }
 
@@ -117,10 +119,22 @@ public class MenuTests {
     public void testMenuToString() {
         menu.addMenuItem("Test Item 1", "entree", 10.99, "Description 1");
         menu.addMenuItem("Test Item 2", "drink", 5.99, "Description 2");
+        menu.addMenuItem("Test Item 3", "entree", 4.99, "Description 3");
         String expected = "Type: ENTREE\n" +
+                          "\tTest Item 3 - $4.99: Description 3\n" +
                           "\tTest Item 1 - $10.99: Description 1\n" +
                           "Type: DRINK\n" +
                           "\tTest Item 2 - $5.99: Description 2\n";
         assertEquals(expected, menu.toString());
+    }
+
+    @AfterEach
+    public void tearDown() {
+        menu = null;
+        try {
+            java.nio.file.Files.write(java.nio.file.Paths.get("./src/test/java/tests/TestMenu.txt"), new byte[0]);
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
     }
 }
