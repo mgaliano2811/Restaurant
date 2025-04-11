@@ -19,6 +19,13 @@ public class MenuTests {
     public void setUp() {
         menu = new Menu("./src/test/java/tests/TestMenu.txt");
     }
+
+    @Test
+    public void testMenuDefaultLoading() {
+        assertDoesNotThrow(() -> {
+            menu = new Menu();
+        });
+    }
     
     @Test
     public void TestMenuLoading() {
@@ -112,7 +119,9 @@ public class MenuTests {
     public void testMenuToString() {
         menu.addMenuItem("Test Item 1", "entree", 10.99, "Description 1");
         menu.addMenuItem("Test Item 2", "drink", 5.99, "Description 2");
+        menu.addMenuItem("Test Item 3", "entree", 4.99, "Description 3");
         String expected = "Type: ENTREE\n" +
+                          "\tTest Item 3 - $4.99: Description 3\n" +
                           "\tTest Item 1 - $10.99: Description 1\n" +
                           "Type: DRINK\n" +
                           "\tTest Item 2 - $5.99: Description 2\n";
