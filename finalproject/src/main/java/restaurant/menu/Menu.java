@@ -10,7 +10,7 @@ public class Menu {
     // Constructor to initialize the menu from a default file path
     public Menu() {
         this.menuItems = new HashMap<>();
-        parseMenuFile("./menu/Menu.txt");
+        parseMenuFile("./src/main/java/restaurant/menu/Menu.txt");
     }
 
     // Constructor to initialize the menu from a specified file path
