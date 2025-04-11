@@ -1,1 +1,0 @@
-New Item,DRINK,5.99,At least one item is here to test if menu can load.

@@ -8,8 +8,6 @@ import restaurant.menu.ItemType;
 import restaurant.menu.Menu;
 import restaurant.menu.MenuItem;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 
 public class MenuTests {
@@ -17,17 +15,12 @@ public class MenuTests {
 
     @BeforeEach
     public void setUp() {
-        try (PrintWriter writer = new PrintWriter("./menu/TestMenu.txt")) {
-            writer.print("");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        menu = new Menu("./menu/TestMenu.txt");
+        menu = new Menu("./src/test/java/tests/TestMenu.txt");
     }
     
     @Test
     public void TestMenuLoading() {
-    	menu = new Menu("./menu/TestMenuLoading.txt");
+    	menu = new Menu("./src/test/java/tests/TestMenuLoading.txt");
     	assertEquals(1, menu.getMenu().size());
     }
 
