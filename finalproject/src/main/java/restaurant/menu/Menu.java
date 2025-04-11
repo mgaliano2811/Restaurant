@@ -6,16 +6,19 @@ import java.util.HashMap;
 public class Menu {
 
     private HashMap<String, MenuItem> menuItems;
+    private String filePath;
 
     // Constructor to initialize the menu from a default file path
     public Menu() {
         this.menuItems = new HashMap<>();
-        parseMenuFile("./src/main/java/restaurant/menu/Menu.txt");
+        this.filePath = "./src/main/java/restaurant/menu/Menu.txt";
+        parseMenuFile(filePath);
     }
 
     // Constructor to initialize the menu from a specified file path
     public Menu(String filePath) {
         this.menuItems = new HashMap<>();
+        this.filePath = filePath;
         parseMenuFile(filePath);
     }
 
@@ -81,7 +84,7 @@ public class Menu {
     }
 
     private void updateMenuFile() {
-        try (java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.FileWriter("./menu/Menu.txt"))) {
+        try (java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.FileWriter(this.filePath))) {
             for (MenuItem item : menuItems.values()) {
                 writer.write(item.getName() + "," + item.getItemType().toString() + "," + item.getPrice() + "," + item.getDescription());
                 writer.newLine();
