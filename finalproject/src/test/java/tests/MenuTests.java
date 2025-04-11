@@ -1,6 +1,8 @@
 package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -115,5 +117,15 @@ public class MenuTests {
                           "Type: DRINK\n" +
                           "\tTest Item 2 - $5.99: Description 2\n";
         assertEquals(expected, menu.toString());
+    }
+
+    @AfterEach
+    public void tearDown() {
+        menu = null;
+        try {
+            java.nio.file.Files.write(java.nio.file.Paths.get("./src/test/java/tests/TestMenu.txt"), new byte[0]);
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
     }
 }
