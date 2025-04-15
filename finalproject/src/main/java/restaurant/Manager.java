@@ -1,7 +1,7 @@
 package restaurant;
 
 public class Manager extends Staff{
-    public Manager(String lastName, String firstName, int employeeID, String password){
+    public Manager(String lastName, String firstName, int employeeID){
         super(lastName, firstName, employeeID);
     }
     @Override
