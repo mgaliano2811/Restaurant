@@ -14,15 +14,23 @@ public class Database {
         payroll = new Payroll();
     }
 
-    // Create and add employee (basically we hired someone)
-    public void addEmployee(String name, String lastname, String type, double salary) {
+    private int generateUniqueID() {
         int employeeID = (int)(Math.random() * 90000000) + 10000000;
+        for (Staff e: employees) {      // If ID is not unique, regenerate
+            if (e.getEmloyeeID() == employeeID) return generateUniqueID();
+        }
+        return employeeID;      // We have unique ID
+    }
+
+    // Create and add employee (basically we hired someone)
+    public void addEmployee(String name, String lastname, StaffType type, double salary) {
+        int employeeID = generateUniqueID();
         Staff newEmployee;
-        if (type.toLowerCase().contains("waiter"))      // Create waiter
+        if (type.equals(StaffType.WAITER))           // Create waiter
             newEmployee = new Waiter(lastname, name, employeeID);
-        else if (type.toLowerCase().contains("chef"))   // Create chef
+        else if (type.equals(StaffType.CHEF))        // Create chef
             newEmployee = new Chef(lastname, name, employeeID);
-        else if (type.toLowerCase().contains("manager")) // Create manager
+        else if (type.equals(StaffType.MANAGER))     // Create manager
             newEmployee = new Manager(lastname, name, employeeID);
         else newEmployee = new Staff(lastname, name, employeeID);   // Any other staff
         employees.add(newEmployee);                     // Add to employees

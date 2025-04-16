@@ -8,8 +8,9 @@ public class Waiter extends Staff {
         super(lastName, firstName, employeeID);
         assignedTables = new ArrayList<Integer>();
     }
-    @Override
-    public String toString() { return super.toString() + "(Waiter)"; }
+
+    @Override       // Override getEmployeeType() to new subtype
+    public StaffType getEmployeeType() { return StaffType.WAITER; }
 
     // Assign a table to a waiter
     public void assignTable (Integer tableNumber) { assignedTables.add(tableNumber); }
@@ -19,4 +20,7 @@ public class Waiter extends Staff {
         int i = assignedTables.indexOf(tableNumber);
         assignedTables.remove(i);
     }
+
+    @Override
+    public String toString() { return super.toString() + "(Waiter)"; }
 } 
