@@ -30,4 +30,15 @@ public class Table {
     public int getTableNumber() { return this.tableNumber; }  
     
     public int getCurrCapacity() { return this.currCapacity; }
+
+    // Gets a representation of this Table in string form
+    // The string is formated as "tableNumber:maxCapacity"
+    public String dataString() {
+        return "" + tableNumber + ":" + maxCapacity;
+    }
+
+    // Debug print
+    public void debugPrint() {
+        System.out.print("Table " + tableNumber + ", Capacity " + maxCapacity);
+    }
 }

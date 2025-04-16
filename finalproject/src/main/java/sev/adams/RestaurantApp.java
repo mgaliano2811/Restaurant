@@ -14,7 +14,7 @@ public class RestaurantApp extends Application{
 
     @Override
     public void start(Stage stage) throws Exception {
-        scene = new Scene(loadFXML("restaurantPrimary"), 370, 270);
+        scene = new Scene(loadFXML("restaurantPrimary"), 770, 520);
 
         stage.setTitle("Resturant Final Project");
         stage.setScene(scene);

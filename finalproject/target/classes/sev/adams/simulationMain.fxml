@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import sev.adams.view.TablesListView?>
+
+<GridPane fx:controller="sev.adams.controller.simulationMainController"
+    xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+<padding><Insets top="5" right="5" bottom="5" left="5"/></padding>
+
+    <Label fx:id="tablesLabel" text="Tables:"
+        GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+    
+    <TablesListView fx:id="tablesList"
+        GridPane.columnIndex="1" GridPane.rowIndex="1">  
+    </TablesListView>
+
+    <Button fx:id="button" text="Button" onAction="#doButton"
+        GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+
+
+</GridPane>

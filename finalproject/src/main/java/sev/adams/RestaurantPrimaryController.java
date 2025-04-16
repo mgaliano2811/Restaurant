@@ -9,11 +9,13 @@ import javafx.scene.control.TextField;
 public class RestaurantPrimaryController {
     @FXML
     private TextField tableField;
+    
     private int numTables;
 
+    // Go into the main restaurant view
     @FXML
     private void StartRestaurant() throws IOException {
-        System.out.print("opening!");
+        RestaurantApp.setRoot("simulationMain");
     }
 
     // Look to see if the new number input is valid, update numTables if it is
