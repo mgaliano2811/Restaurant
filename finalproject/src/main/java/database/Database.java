@@ -1,5 +1,6 @@
 package database;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import restaurant.*;
 
@@ -16,9 +17,8 @@ public class Database {
 
     private int generateUniqueID() {
         int employeeID = (int)(Math.random() * 90000000) + 10000000;
-        for (Staff e: employees) {      // If ID is not unique, regenerate
+        for (Staff e: employees)     // If ID is not unique, regenerate
             if (e.getEmloyeeID() == employeeID) return generateUniqueID();
-        }
         return employeeID;      // We have unique ID
     }
 
@@ -37,5 +37,77 @@ public class Database {
         payroll.addEmployee(newEmployee, salary);       // Add to payroll records
     }
 
+    // Will complete this later when we have a view
+    public void fireEmployee(String name, String lastname) {
+        ArrayList<Staff> matches = new ArrayList<Staff>();
+        for (Staff s: employees) {
+            if (s.getFirstName().equals(name) && s.getLastName().equals(lastname))
+                matches.add(s);
+        }
+        if (matches.size() == 0) {
+            System.err.println("Couldn't find employee " + name + ", " + lastname);
+        } else if (matches.size() == 1) {
+            fireEmployee(matches.get(0).getEmloyeeID());
+        } else {
+            // TODO: Find a way to number on the view or make them pick
+        }
+    }
 
+    public void fireEmployee(int ID) {
+        if (validateInputID(ID))
+            for (Staff s: employees)
+                if (s.getEmloyeeID() == ID) {
+                    employees.remove(s);
+                    payroll.removeEmployee(ID);
+                    return;
+                }
+    }
+
+    // Make sure ID exists in database (so we don't need to check later)
+    public boolean validateInputID (int ID) {
+        for (Staff s: employees)
+            if (s.getEmloyeeID() == ID) return true;
+        System.err.println("No employee with ID " + ID);
+        return false;
+    }
+
+    // Method to pass info into Payroll class
+    public void recordTip(int ID, double tipAmount) { 
+        if (validateInputID(ID))
+            payroll.recordTip(ID, tipAmount); 
+    }
+
+    public Double getTip(int ID) { 
+        if (validateInputID(ID))
+            return payroll.getTip(ID);
+        else return null;
+    }
+
+    public String getPayrollInfo(int ID) {
+        if (validateInputID(ID)) 
+            return payroll.getPayrollRecord(ID);
+        else return null;
+    }
+
+    public double getTotalPayroll() { return payroll.totalPayrollExpense(); }
+
+    public void updateSalary(int ID, double newSalary) { 
+        if (validateInputID(ID))
+            payroll.updateSalary(ID, newSalary);
+    }
+
+    public Double getSalary(int ID) { 
+        if (validateInputID(ID))
+            return payroll.getSalary(ID); 
+        else return null;
+    }
+
+    public Double getCompensation(int ID) {
+        if (validateInputID(ID))
+            return payroll.getTotalCompensation(ID);
+        else return null;
+    }
+
+    // Return only shallow copy cause staff is immutable
+    public ArrayList<Staff> getEmployees() { return new ArrayList<Staff>(employees); }
 }

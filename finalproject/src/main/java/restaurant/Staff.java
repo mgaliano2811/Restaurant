@@ -14,7 +14,7 @@ public class Staff{
     }
 
     // Getters
-    public String getLastName() { return firstName; }
+    public String getLastName() { return lastName; }
 
     public String getFirstName() { return firstName; }
 
@@ -24,7 +24,7 @@ public class Staff{
 
     @Override
     public String toString(){
-        return this.firstName + this.lastName + "," + this.employeeID;
+        return this.firstName + " " + this.lastName + ", " + this.employeeID;
     }
 
     // Override hashCode and base it on unique employeeID

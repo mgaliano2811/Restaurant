@@ -1,33 +1,40 @@
 package restaurant;
 
+/* 
+ * CLASS IS IMMUTABLE, NO PROBLEMATIC ESCAPING REFERENCES
+ */
+
 public class Table {
     private int maxCapacity;        // People we can sit on the table
-    private int currCapacity;       // No of people actually seated in the table
-    private int tableNumber;        // Make it like an ID
+    private final int tableNumber;        // Make it like an ID
 
     public Table(int tableNumber, int maxCapacity) {
         this.tableNumber = tableNumber;
         this.maxCapacity = maxCapacity;
     }
+
     public Table (Table table) {
         this.tableNumber = table.tableNumber;
         this.maxCapacity = table.maxCapacity;
     }
 
-    // Simulate seating people in the table
-    public void seatPeople(int noOfPeople) { 
-        if (noOfPeople < 1 || noOfPeople > maxCapacity)   // Check if people fit
-            this.currCapacity = noOfPeople; 
-    }
-
-    public boolean isFree() { return currCapacity == 0; }  // Return if a table is free
-
-    // Simulate freeing up the table
-    public void freeTable() { this.currCapacity = 0; }
-
     public int getMaxCapacity() { return this.maxCapacity; }
 
-    public int getTableNumber() { return this.tableNumber; }  
-    
-    public int getCurrCapacity() { return this.currCapacity; }
+    public int getTableNumber() { return this.tableNumber; }
+
+    @Override
+    public String toString() {
+        return "Table number: " + tableNumber + "max capacity: " + maxCapacity;
+    }
+
+    @Override
+    public int hashCode() { return Integer.hashCode(tableNumber); }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;                // Same object
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Table other = (Table) obj;
+        return this.tableNumber == other.tableNumber;
+    }
 }

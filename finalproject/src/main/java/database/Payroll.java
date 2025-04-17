@@ -24,27 +24,31 @@ import restaurant.*;
         PayrollRecord record = new PayrollRecord(employee, salary);
         payrollRecords.put(employee.getEmloyeeID(), record);
     }
-
-    // Returns payroll record for the given employee ID.
-    public PayrollRecord getPayrollRecord(int employeeID) {
-        return payrollRecords.get(employeeID);
-    }
     
     // Updates the salary for given employee
     public void updateSalary(int employeeID, double newSalary) {
         PayrollRecord record = payrollRecords.get(employeeID);
-        if (record != null) {
-            record.setSalary(newSalary);
-        }
+        record.setSalary(newSalary);
     }
-    
+
+    public double getSalary(int ID) {
+        PayrollRecord record = payrollRecords.get(ID);
+        return record.getSalary();
+
+    }
     // Records a tip for employee. We check if its waiter inside addTip()
     public void recordTip(int employeeID, double tipAmount) {
         PayrollRecord record = payrollRecords.get(employeeID);
-        if (record != null) {
-            record.addTip(tipAmount);
-        }
+        record.addTip(tipAmount);
     }
+
+    public double getTip(int ID) { return payrollRecords.get(ID).getTips(); }
+
+    public double getTotalCompensation(int ID) { 
+        return payrollRecords.get(ID).getTotalCompensation(); 
+    }
+
+    public String getPayrollRecord(int ID) { return payrollRecords.get(ID).toString(); }
     
     // Calculates the total fixed payroll expense adding base salaries for employees
     public double totalPayrollExpense() {
@@ -53,11 +57,6 @@ import restaurant.*;
             total += record.getSalary();
         }
         return total;
-    }
-    
-    // Returns all payroll records.
-    public HashMap<Integer, PayrollRecord> getPayrollRecords() {
-        return payrollRecords;
     }
     
     /**
@@ -75,22 +74,12 @@ import restaurant.*;
             this.salary = salary;
             this.tips = 0.0;
         }
+                
+        public double getSalary() { return salary; }
         
-        public Staff getEmployee() {
-            return employee;
-        }
+        public void setSalary(double salary) { this.salary = salary; }
         
-        public double getSalary() {
-            return salary;
-        }
-        
-        public void setSalary(double salary) {
-            this.salary = salary;
-        }
-        
-        public double getTips() {
-            return tips;
-        }
+        public double getTips() { return tips; }
         
         public void addTip(double tipAmount) {
             if (this.employee instanceof Waiter)
@@ -99,14 +88,15 @@ import restaurant.*;
         }
         
         // Get the total compensation (base salary plus tips)
-        public double getTotalCompensation() {
-            return salary + tips;
-        }
+        public double getTotalCompensation() { return salary + tips; }
         
         @Override
         public String toString() {
-            return "PayrollRecord [Employee=" + employee.toString() + 
-                   ", Salary=" + salary + ", Tips=" + tips + "]";
+            return "PayrollRecord [Employee: " + employee.toString() + 
+                   ", Salary: " + salary + ", Tips: " + tips + "]";
         }
     }
+
+    // Remove employee (case we fire someone)
+    public void removeEmployee(Integer ID) { payrollRecords.remove(ID); }
 }
