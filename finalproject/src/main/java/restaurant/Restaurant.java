@@ -3,6 +3,7 @@ package restaurant;
 import java.util.ArrayList;
 import java.lang.Math;
 import java.util.HashMap;
+import java.util.List;
 
 public class Restaurant {
     private final String restaurantName; // Final cause why not fuck it
@@ -10,6 +11,7 @@ public class Restaurant {
     private ArrayList<Table> occupiedTables;
     // Have the list of tables divided by their maxCapacity to make seating easier
     private HashMap<Integer, ArrayList<Table>> tablesByCapacity;
+    private HashMap<Waiter, ArrayList<Table>> waitersToTable;   // Tables assigned to each waiter
 
     private int maxCapacity;
     private int currCapacity;
@@ -18,8 +20,10 @@ public class Restaurant {
         freeTables = new ArrayList<Table>();
         occupiedTables = new ArrayList<Table>();
         restaurantName = "Whatever Name Restaurant";
-        maxCapacity = 0; // For now
+        maxCapacity = 200; // For now
         currCapacity = 0;
+        tablesByCapacity = new HashMap<Integer, ArrayList<Table>>();
+        waitersToTable   = new HashMap<Waiter, ArrayList<Table>>();
     }
 
     public String getRestaurantName() { return restaurantName; }    // Get name
@@ -32,7 +36,7 @@ public class Restaurant {
     public void seatPeople(int people) {
         int possibleSeats = 0;
         for (Table t: freeTables)   // For loop to get all available seats 
-            if (occupied(t)) possibleSeats += t.getMaxCapacity();
+            if (!occupied(t)) possibleSeats += t.getMaxCapacity();
         if (possibleSeats < people) {
             System.err.println("There is not enough capasity to sit " + people + " people.");
             return;         // Return cause we can't do anything
@@ -52,28 +56,44 @@ public class Restaurant {
                 int group2 = ((Double)Math.ceil(noOfPeople/2)).intValue();  // Take the ceiling of people/2
                 actuallySeatPeople(group1);
                 actuallySeatPeople(group2);
+                return;
             }
-            for (Table t: tablesByCapacity.get(count))
-                if (!occupied(t)) {    // If Table is not occupied, remove from free & add to occupied
-                    int i = freeTables.indexOf(t);
-                    Table occTable = freeTables.get(i);
-                    freeTables.remove(i);
-                    occupiedTables.add(occTable);
-                    currCapacity += noOfPeople;             // Update current capacity
-                    done = true;
+            List<Table> bucket = tablesByCapacity.get(count);
+            if (bucket != null)
+                for (Table t: bucket) {
+                    if (!occupied(t)) {    // If Table is not occupied, remove from free & add to occupied
+                        int i = freeTables.indexOf(t);
+                        Table occTable = freeTables.get(i);
+                        freeTables.remove(i);           // Remove from free tables
+                        occupiedTables.add(occTable);   // Add to occupied tables
+                        assignWaiter(occTable);         // Assign waiter to table
+                        currCapacity += noOfPeople;     // Update current capacity
+                        done = true;
+                    }
                 }
             count++;
-        }
+        }   
     }
 
-    // People at the table standed up so we free it. However we might need some 
-    // form to indetify the table other than ID, so we can overload the method
-    // if needed for more simplicity.
+    // People at the table left up so we free it
     public void freeTable(int tableID) {
+        Table tableToFree = null;
         for (Table t: occupiedTables) {
-            if (t.getTableNumber() == tableID) occupiedTables.remove(t);
-            return;
+            if (t.getTableNumber() == tableID) {
+                tableToFree = t;
+            }
         }
+        if (tableToFree != null) {      // If there is a match
+            occupiedTables.remove(tableToFree);
+            freeTables.add(tableToFree);        // Free table
+            for (ArrayList<Table> assigned : waitersToTable.values()) {
+                if (assigned.contains(tableToFree)) {
+                    assigned.remove(tableToFree);     // Deassign table from waiter
+                    return;
+                }
+            }
+        }
+        // If we get here there is no match
         for (Table t: freeTables) {
             if (t.getTableNumber() == tableID){
                 System.err.println("Table is already free");
@@ -131,23 +151,64 @@ public class Restaurant {
     public void addTable(int capacity) {
         Table t = new Table (assignTableNumber(), capacity);
         freeTables.add(t);
+        if (tablesByCapacity.keySet().contains(capacity)) {
+            ArrayList<Table> listToAdd = tablesByCapacity.get(capacity);
+            listToAdd.add(t);
+        } else {      // If there are no tables with that capcity, create list first
+            tablesByCapacity.put(capacity, new ArrayList<Table>());
+            ArrayList<Table> listToAdd = tablesByCapacity.get(capacity);
+            listToAdd.add(t);
+        }
     }
 
+    // Helper to get the minimum table number available 
     private int assignTableNumber() {
         ArrayList<Integer> tableIDs = new ArrayList<Integer>();
         for (Table t: freeTables) tableIDs.add(t.getTableNumber());
         for (Table t: occupiedTables) tableIDs.add(t.getTableNumber());
-        for (int i = 1; i < numberOfTables(); i++) {
-            if (!tableIDs.contains(i)) return i;    // If ID is available return
+        for (int i = 1; ; i++) {
+            if (!tableIDs.contains(i)) return i;
         }
-        return numberOfTables();
     }
 
+    // Remove a table
     public void removeTable(int tableNumber) { 
         Table t = getTable(tableNumber);
         if (t != null) {
-            if (freeTables.contains(t)) freeTables.remove(t);
-            else if (occupiedTables.contains(t)) occupiedTables.remove(t);
+            if (!occupied(t)) {
+                freeTables.remove(t);
+                ArrayList<Table> list = tablesByCapacity.get(t.getMaxCapacity());
+                if (list != null) list.remove(t);
+            }
+            else System.err.println("Cannot remove an occupied table");
         }
     }
+
+    // Assign waiter with the least tables currently assigned the table
+    // @pre: Don't pass in null Table
+    public void assignWaiter(Table table) {
+        if (waitersToTable == null || waitersToTable.isEmpty()) {
+            System.err.println("No waiters available to assign table " + table.getTableNumber());
+            return;
+        }
+        int minNoOfTables = Integer.MAX_VALUE;      // Minimum num of tables assigned to a waiter
+        Waiter waiterToAssign = null;     // Waiter with the minimum tables assigned
+        for (Waiter w: waitersToTable.keySet()) {
+            ArrayList<Table> assigned = waitersToTable.get(w);
+            if (minNoOfTables > assigned.size()) {
+                minNoOfTables = assigned.size();
+                waiterToAssign = w;
+            }
+        }
+        waitersToTable.get(waiterToAssign).add(table);      // Assign the table
+    }
+
+    /*
+     * This will be used in the view to add waiter to database and
+     * to the restaurant, so we can assign tables (has to be done in parallel)
+     * We will pass in the same waiter object because its immutable, so we will not
+     * have any duplicates
+     */
+    public void addWaiter(Waiter w) { waitersToTable.put(w, new ArrayList<Table>()); }
+
 }

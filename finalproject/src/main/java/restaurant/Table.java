@@ -24,7 +24,7 @@ public class Table {
 
     @Override
     public String toString() {
-        return "Table number: " + tableNumber + "max capacity: " + maxCapacity;
+        return "Table number: " + tableNumber + ", max capacity: " + maxCapacity;
     }
 
     @Override
