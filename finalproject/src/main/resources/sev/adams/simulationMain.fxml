@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import sev.adams.view.TablesListView?>
+<?import sev.adams.view.CustomersListView?>
+
+<GridPane fx:controller="sev.adams.controller.simulationMainController"
+    xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+<padding><Insets top="5" right="5" bottom="5" left="5"/></padding>
+
+    <Label fx:id="customersLabel" text="Customer Groups" 
+        GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+
+    <CustomersListView fx:id="customersList"
+        GridPane.columnIndex="0" GridPane.rowIndex="1">
+    </CustomersListView>
+
+    <Label fx:id="tablesLabel" text="Tables:"
+        GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+    
+    <TablesListView fx:id="tablesList"
+        GridPane.columnIndex="1" GridPane.rowIndex="1">  
+    </TablesListView>
+
+    <Button fx:id="timeButton" text="Progress Time" onAction="#doTimeButton"
+        GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+
+
+</GridPane>
