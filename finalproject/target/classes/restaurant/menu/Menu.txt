@@ -1,1 +1,6 @@
-New Item,DRINK,5.99,A new drink item.
+Grilled Chicken,ENTREE,12.99,Juicy grilled chicken with herbs.
+Caesar Salad,ENTREE,8.99,Classic Caesar salad with croutons.
+Iced Coffee,DRINK,5.99,Chilled coffee served over ice.
+Lemonade,DRINK,3.99,Refreshing homemade lemonade.
+Chocolate Cake,DESSERT,6.99,Rich chocolate cake with frosting.
+Ice Cream,DESSERT,4.99,Vanilla ice cream with toppings.
