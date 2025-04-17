@@ -22,10 +22,17 @@ public class CustomerGroup implements Iterable<Customer>{
         return customers.size();
     }
 
+    public double getBill() {
+        double total = 0.0;
+        for (Customer customer : customers) {
+            total += customer.getTotalPrice();
+        }
+        return total;
+    }
+
     @Override
     public Iterator<Customer> iterator() {
         return customers.iterator();
     }
-
     
 }

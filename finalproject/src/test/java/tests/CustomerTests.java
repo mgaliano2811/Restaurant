@@ -21,6 +21,13 @@ public class CustomerTests {
     }
 
     @Test
+    public void getCustomerOrderPrice() {
+        restaurant.Customer customer = new restaurant.Customer();
+        double totalPrice = customer.getTotalPrice();
+        assertTrue(totalPrice > 0.0);
+    }
+
+    @Test
     public void testCustomerGroupCreation() {
         restaurant.CustomerGroup group = new restaurant.CustomerGroup();
         assertNotNull(group);
@@ -49,6 +56,18 @@ public class CustomerTests {
         assertEquals(customer1.getId(), iterator.next().getId());
         assertEquals(customer2.getId(), iterator.next().getId());
         assertEquals(customer3.getId(), iterator.next().getId());
+    }
+
+    @Test
+    public void testGetBill() {
+        restaurant.CustomerGroup group = new restaurant.CustomerGroup();
+        restaurant.Customer customer1 = new restaurant.Customer();
+        restaurant.Customer customer2 = new restaurant.Customer();
+        group.addCustomer(customer1);
+        group.addCustomer(customer2);
+        double totalBill = group.getBill();
+        assertTrue(totalBill > 0.0);
+        assertEquals(customer1.getTotalPrice() + customer2.getTotalPrice(), totalBill);
     }
 
 }

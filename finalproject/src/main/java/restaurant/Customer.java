@@ -9,23 +9,11 @@ import restaurant.menu.*;
 //  This should remain IMMUTABLE, please...
 public class Customer {
     UUID id;
-    ArrayList<MenuItem> foodWant;
+    Order foodWant;
 
     public Customer() {
         id = UUID.randomUUID();
-        foodWant = makeFoodWant();
-    }
-
-    private ArrayList<MenuItem> makeFoodWant() {
-        ArrayList<MenuItem> foodWant = new ArrayList<>();
-        
-        Menu menu = new Menu();
-
-        foodWant.add(menu.getMenuByType(ItemType.ENTREE).values().iterator().next());
-        foodWant.add(menu.getMenuByType(ItemType.DRINK).values().iterator().next());
-        foodWant.add(menu.getMenuByType(ItemType.DESSERT).values().iterator().next());
-
-        return foodWant;
+        foodWant = new Order();
     }
 
     public String getId() {
@@ -33,6 +21,10 @@ public class Customer {
     }
 
     public ArrayList<MenuItem> getFoodWant() {
-        return new ArrayList<>(foodWant);
+        return foodWant.getOrderItems();
+    }
+
+    public double getTotalPrice() {
+        return foodWant.getTotalPrice();
     }
 }
