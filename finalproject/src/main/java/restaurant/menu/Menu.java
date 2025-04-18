@@ -26,13 +26,14 @@ public class Menu {
         try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",", 4);
-                if (parts.length == 4) {
+                String[] parts = line.split(",", 5);
+                if (parts.length == 5) {
                     String itemName = parts[0].trim();
                     String itemType = parts[1].trim();
                     double price = Double.parseDouble(parts[2].trim());
                     String description = parts[3].trim();
-                    menuItems.put(itemName, new MenuItem(itemName, itemType, price, description));
+                    int cookTime = Integer.parseInt(parts[4].trim());
+                    menuItems.put(itemName, new MenuItem(itemName, itemType, price, description, cookTime));
                 }
             }
         } catch (java.io.IOException | NumberFormatException e) {
@@ -54,9 +55,9 @@ public class Menu {
         return filteredMenu;
     }
     
-    public void addMenuItem(String name, String itemString, double price, String description) {
+    public void addMenuItem(String name, String itemString, double price, String description, int cookTime) {
         if (!menuItems.containsKey(name)) { // Check if the item already exists
-            MenuItem newItem = new MenuItem(name, itemString, price, description);
+            MenuItem newItem = new MenuItem(name, itemString, price, description, cookTime);
             menuItems.put(name, newItem);
         } else {
             System.err.println("Menu item with name " + name + " already exists.");
@@ -73,9 +74,9 @@ public class Menu {
         updateMenuFile();
     }
 
-    public void updateMenuItem(String name, String itemString, double price, String description) {
+    public void updateMenuItem(String name, String itemString, double price, String description, int cookTime) {
         if (menuItems.containsKey(name)) {
-            MenuItem updatedItem = new MenuItem(name, itemString, price, description);
+            MenuItem updatedItem = new MenuItem(name, itemString, price, description, cookTime);
             menuItems.put(name, updatedItem);
         } else {
             System.err.println("Menu item with name " + name + " does not exist.");
