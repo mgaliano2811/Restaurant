@@ -32,13 +32,42 @@ public class Restaurant {
 
     public int getCurrRestaurantCapacity() { return currCapacity; } // Get people inside
 
+    // TODO: This is probably terrible? we should to pick one of the tables lists and stick with it (probably the hashmap)
+    public void addTable(Table newTable) {
+        // Avoid encapsulation errors...
+        newTable = new Table(newTable);
+
+        tables.add(newTable);
+        
+        ArrayList<Table> capacityList = tablesByCapacity.get(newTable.getMaxCapacity());
+        if (capacityList != null) {
+            capacityList.add(newTable);
+        } else {
+            tablesByCapacity.put(newTable.getMaxCapacity(), new ArrayList<Table>());
+            tablesByCapacity.get(newTable.getMaxCapacity()).add(newTable);
+        }
+    }
+
+    // Returns a list of strings representing all of the tables
+    public ArrayList<String> tableStringList() {
+        ArrayList<String> returnList = new ArrayList<String>();
+
+        for (int key : tablesByCapacity.keySet()) {
+            for (Table table : tablesByCapacity.get(key)) {
+                returnList.add(table.dataString());
+            }
+        }
+
+        return returnList;
+    }
+
     // Will add prechecks depending on implementation of max capacity
     public void seatPeople(int people) {
         int possibleSeats = 0;
         for (Table t: freeTables)   // For loop to get all available seats 
             if (!occupied(t)) possibleSeats += t.getMaxCapacity();
         if (possibleSeats < people) {
-            System.err.println("There is not enough capasity to sit " + people + " people.");
+            System.err.println("There is not enough capacity to sit " + people + " people.");
             return;         // Return cause we can't do anything
         }
         actuallySeatPeople(people);
@@ -118,6 +147,18 @@ public class Restaurant {
             if (i > max) max = i;
         }
         return max;
+    }
+
+    // Debug funciton
+    public void debugPrint() {
+        for (int i : tablesByCapacity.keySet()) {
+            System.out.print("Tables with " + i + " Capacity: ");
+            for (Table t : tablesByCapacity.get(i)) {
+                t.debugPrint();
+                System.out.print("|");
+            }
+            System.out.print("\n");
+        }
     }
 
     /* Design by contract:
