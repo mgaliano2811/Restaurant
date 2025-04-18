@@ -1,6 +1,6 @@
-Grilled Chicken,ENTREE,12.99,Juicy grilled chicken with herbs.
-Caesar Salad,ENTREE,8.99,Classic Caesar salad with croutons.
-Iced Coffee,DRINK,5.99,Chilled coffee served over ice.
-Lemonade,DRINK,3.99,Refreshing homemade lemonade.
-Chocolate Cake,DESSERT,6.99,Rich chocolate cake with frosting.
-Ice Cream,DESSERT,4.99,Vanilla ice cream with toppings.
+Grilled Chicken,ENTREE,12.99,Juicy grilled chicken with herbs.,3
+Caesar Salad,ENTREE,8.99,Classic Caesar salad with croutons.,2
+Iced Coffee,DRINK,5.99,Chilled coffee served over ice.,1
+Lemonade,DRINK,3.99,Refreshing homemade lemonade.,1
+Chocolate Cake,DESSERT,6.99,Rich chocolate cake with frosting.,2
+Ice Cream,DESSERT,4.99,Vanilla ice cream with toppings.,1s
