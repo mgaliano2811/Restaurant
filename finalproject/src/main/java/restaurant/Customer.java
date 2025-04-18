@@ -1,13 +1,30 @@
 package restaurant;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
+import restaurant.menu.*;
+
 // A basic customer class, they have something they want to eat
 //  This should remain IMMUTABLE, please...
 public class Customer {
-    String name;
-    String foodWant;
+    UUID id;
+    Order foodWant;
 
     public Customer() {
-        name = "Severian";
-        foodWant = "Lemons";
+        id = UUID.randomUUID();
+        foodWant = new Order();
+    }
+
+    public String getId() {
+        return id.toString();
+    }
+
+    public ArrayList<MenuItem> getFoodWant() {
+        return foodWant.getOrderItems();
+    }
+
+    public double getTotalPrice() {
+        return foodWant.getTotalPrice();
     }
 }
