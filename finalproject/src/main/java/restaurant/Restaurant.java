@@ -32,32 +32,14 @@ public class Restaurant {
 
     public int getCurrRestaurantCapacity() { return currCapacity; } // Get people inside
 
-    // TODO: This is probably terrible? we should to pick one of the tables lists and stick with it (probably the hashmap)
-    public void addTable(Table newTable) {
-        // Avoid encapsulation errors...
-        newTable = new Table(newTable);
-
-        tables.add(newTable);
-        
-        ArrayList<Table> capacityList = tablesByCapacity.get(newTable.getMaxCapacity());
-        if (capacityList != null) {
-            capacityList.add(newTable);
-        } else {
-            tablesByCapacity.put(newTable.getMaxCapacity(), new ArrayList<Table>());
-            tablesByCapacity.get(newTable.getMaxCapacity()).add(newTable);
-        }
-    }
-
     // Returns a list of strings representing all of the tables
     public ArrayList<String> tableStringList() {
         ArrayList<String> returnList = new ArrayList<String>();
-
         for (int key : tablesByCapacity.keySet()) {
             for (Table table : tablesByCapacity.get(key)) {
-                returnList.add(table.dataString());
+                returnList.add(table.toString());
             }
         }
-
         return returnList;
     }
 
@@ -154,7 +136,7 @@ public class Restaurant {
         for (int i : tablesByCapacity.keySet()) {
             System.out.print("Tables with " + i + " Capacity: ");
             for (Table t : tablesByCapacity.get(i)) {
-                t.debugPrint();
+                System.out.println(t.toString());
                 System.out.print("|");
             }
             System.out.print("\n");
