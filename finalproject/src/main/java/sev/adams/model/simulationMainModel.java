@@ -31,8 +31,8 @@ public class simulationMainModel {
         restaurant = new Restaurant();
 
         // Add the tables
-        for (int i = 2; i <= 7; i++) { restaurant.addTable(new Table(i - 1, i)); }
-        restaurant.addTable(new Table(7, 7));
+        for (int i = 2; i <= 7; i++) { restaurant.addTable(i); }
+        restaurant.addTable(7);
         restaurant.debugPrint();
 
         // Fill in our other data
