@@ -44,30 +44,31 @@ public class Restaurant {
     }
 
     // Will add prechecks depending on implementation of max capacity
-    public void seatPeople(int people) {
+    // Returns the table that was chosen to seat people at, or null if we could not find a table
+    public Table seatPeople(int people) {
         int possibleSeats = 0;
         for (Table t: freeTables)   // For loop to get all available seats 
             if (!occupied(t)) possibleSeats += t.getMaxCapacity();
         if (possibleSeats < people) {
             System.err.println("There is not enough capacity to sit " + people + " people.");
-            return;         // Return cause we can't do anything
+            return null;         // Return cause we can't do anything
         }
-        actuallySeatPeople(people);
+        return actuallySeatPeople(people);
     }
 
     public boolean occupied (Table t) { return occupiedTables.contains(t); }
 
     // Loop to seat people in the seat (shit name but it is what it is)
-    private void actuallySeatPeople(int noOfPeople) {
-        boolean done = false;
+    //  Returns the table that was chosen
+    private Table actuallySeatPeople(int noOfPeople) {
         int count = noOfPeople;
-        while (!done) {
+        while (true) {
             if (count > biggestTable()) {
                 int group1 = ((Double)Math.floor(noOfPeople/2)).intValue(); // Take the floor of people/2
                 int group2 = ((Double)Math.ceil(noOfPeople/2)).intValue();  // Take the ceiling of people/2
                 actuallySeatPeople(group1);
                 actuallySeatPeople(group2);
-                return;
+                return null;
             }
             List<Table> bucket = tablesByCapacity.get(count);
             if (bucket != null)
@@ -79,7 +80,7 @@ public class Restaurant {
                         occupiedTables.add(occTable);   // Add to occupied tables
                         assignWaiter(occTable);         // Assign waiter to table
                         currCapacity += noOfPeople;     // Update current capacity
-                        done = true;
+                        return t;
                     }
                 }
             count++;

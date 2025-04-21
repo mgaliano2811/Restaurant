@@ -8,8 +8,12 @@ import javafx.scene.control.ListCell;
     //  tableId:tableCapacity (stored in this.item)
 public class TablesListButtonCell extends ListCell<String> {
     // The button for this cell
-    Button cellButton;
+    private Button cellButton;
     
+    // The Table information of the table this cell represents is stored in its item
+    //  It is formatted as a key value list in a string, like so:
+    //  "TableID:(tableID),Capacity:(capacity),CustomerGroup:(customerGroup)"
+    //  Though customerGroup may not be assigned
     public TablesListButtonCell() {
         cellButton = new Button(this.getText());
         // Set up what the button does when its pressed
@@ -33,10 +37,7 @@ public class TablesListButtonCell extends ListCell<String> {
             setText(null);
             setGraphic(null);
         } else {
-            String tableName = "Table " + tableData.split(":")[0];
-            String tableCapacity = "Capacity " + tableData.split(":")[1];
-
-            setText(tableName + " | " + tableCapacity);
+            setText(tableData);
             cellButton.setText("Table Info");
             setGraphic(cellButton);
         }
