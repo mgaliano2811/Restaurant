@@ -71,21 +71,6 @@ public class simulationMainModel {
         customersListObserver.newCustomerGroup(customerGroupDataString);
     }
 
-    // We only have one table list observer, so fill it in
-    public void registerTableListObserver(TablesListView tableListView) {
-        tableListObserver = tableListView; // This is the UI, we dont really care about encapsulation violations
-    }
-
-    // We only have one customer list observer, fill it in
-    public void registerCustomerListObserver(CustomersListView customersListView) {
-        customersListObserver = customersListView;
-    }
-
-    // Let the tableListObserver know that something changed
-    public void notifyTableListObserver() {
-        tableListObserver.updateList(restaurant.tableStringList());
-    }
-
     // Return the customer group that has the given ID
     // @pre customerGroupID is in the customergroups
     private CustomerGroup getCustomerGroupFromID(String customerGroupID) {
@@ -115,7 +100,49 @@ public class simulationMainModel {
             return;
         }
 
-        // Let the relevant observers know that this customerGroup was assigned a table
+        // Now the information is sorted in the model, we need to let observers know so we can update info on the view
+        notifyTableViewObserverOfAssignedCustomerGroup(assignedTable, relevantCustomerGroup.getID());
+        notifyCustomerViewObserverOfAssignedCustomerGroup(assignedTable, relevantCustomerGroup.getID());
 
     }
+
+    //////////////////////////////////////////////////////////////
+    /// Observer Methods
+    //////////////////////////////////////////////////////////////
+
+    // We only have one table list observer, so fill it in
+    public void registerTableListObserver(TablesListView tableListView) {
+        tableListObserver = tableListView; // This is the UI, we dont really care about encapsulation violations
+    }
+
+    // We only have one customer list observer, fill it in
+    public void registerCustomerListObserver(CustomersListView customersListView) {
+        customersListObserver = customersListView;
+    }
+
+    // Completely clear and set the tableListObserver with a new set of tables
+    public void notifyTableListObserverFullUpdate() {
+        tableListObserver.updateList(restaurant.allTables());
+    }
+
+    // Let the tableListObserver know that a new table was added
+    public void notifyTableListObserverOfNewTable(Table newTable) {
+        tableListObserver.addTable(newTable);
+    }
+
+    // Let the customersListObserver know that a customer group has been assigned to a table, and that it needs to update its view
+    //  assignedTable is the table that has been assigned
+    //  customerGroupID is the... well guess
+    private void notifyCustomerViewObserverOfAssignedCustomerGroup(Table assignedTable, String customerGroupID) {
+        customersListObserver.assignCustomerGroupToTable(assignedTable, customerGroupID);
+    }
+
+    // Let the customersListObserver know that a customer group has been assigned to a table, and that it needs to update its view
+    //  assignedTable is the table that has been assigned
+    //  customerGroupID is the... well guess
+    private void notifyTableViewObserverOfAssignedCustomerGroup(Table assignedTable, String customerGroupID) {
+        tableListObserver.assignCustomerGroupToTable(assignedTable, customerGroupID);
+    }
+
+    
 }

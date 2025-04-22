@@ -32,12 +32,12 @@ public class Restaurant {
 
     public int getCurrRestaurantCapacity() { return currCapacity; } // Get people inside
 
-    // Returns a list of strings representing all of the tables
-    public ArrayList<String> tableStringList() {
-        ArrayList<String> returnList = new ArrayList<String>();
+    // Returns a list of all the tables in this restaurant
+    public ArrayList<Table> allTables() {
+        ArrayList<Table> returnList = new ArrayList<Table>();
         for (int key : tablesByCapacity.keySet()) {
             for (Table table : tablesByCapacity.get(key)) {
-                returnList.add(table.toString());
+                returnList.add(table);
             }
         }
         return returnList;

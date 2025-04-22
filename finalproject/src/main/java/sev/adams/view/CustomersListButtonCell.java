@@ -16,7 +16,10 @@ public class CustomersListButtonCell extends ListCell<String> {
         cellButton.setOnAction(event -> 
             {
             String item = this.getItem();
-            myController.CustomerListCellButtonPressed(item);
+            // TODO: Add a good way to unassign tables from a group
+            if (this.getAssignedTableID() == null) {
+                myController.CustomerListCellButtonPressed(item);
+            }
             }
         );
     }
@@ -26,10 +29,46 @@ public class CustomersListButtonCell extends ListCell<String> {
         myController = controller;
     }
 
+    // Gets the customerGroupID field from this.item
+    //  @pre should have an assigned customerGroupID
+    private String getCustomerGroupID() {
+        if (this.getItem() == null || this.isEmpty()) {
+            System.err.println("[!] Error! CustomerListViewCell has no assigned customerGroupID, cannot get it!");
+            return null;
+        } 
+        return this.getItem().split(":")[0];
+    }
+
+    // Gets the customerGroupCapacity field from this.item
+    //  @pre should have an assigned customerGroupID and customerGroupCapacity
+    private String getCustomerCapacity() {
+        if (this.getItem() == null || this.isEmpty()) {
+            System.err.println("[!] Error! CustomerListViewCell has no assigned customerGroupCapacity, cannot get it!");
+            return null;
+        } 
+        return this.getItem().split(":")[1];
+    }
+
+    // Get the assignedTableID field from this.item, if it has one
+    //  otherwise returns null
+    private String getAssignedTableID() {
+        if (this.getItem() == null || this.isEmpty()) {
+            return null;
+        } 
+        String[] splitData = this.getItem().split(":");
+        if (splitData.length >= 3) {
+            // We have an assigned table
+            return splitData[2];
+        } else {
+            // We have no assigned table
+            return null;
+        }
+    }
+
     // How we handle the info for this cell
     //  The info for an individual cell is 
     //  CustomerData is formatted like so:
-    //      "customerGroupID:customerGroupSize"
+    //      "customerGroupID:customerGroupSize:AssignedTableID(optional)"
     @Override
     protected void updateItem(String customerData, boolean empty) {
         super.updateItem(customerData, empty);
@@ -39,10 +78,18 @@ public class CustomersListButtonCell extends ListCell<String> {
             setText(null);
             setGraphic(null);
         } else {
-            String customerGroupID = customerData.split(":")[0];
-            String customerGroupSize = customerData.split(":")[1];
-            setText("ID: " + customerGroupID + " | Size: " + customerGroupSize);
-            cellButton.setText("Assign Group to Table");
+            // At this point our item should already be updated, so we can use our getter methods
+            String customerGroupID = this.getCustomerGroupID();
+            String customerGroupSize = this.getCustomerCapacity();
+            String assignedTableID = this.getAssignedTableID();
+            // The string that will be displayed in this cell
+            String cellText = "Group ID: " + customerGroupID + " \nSize: " + customerGroupSize;
+            if (assignedTableID != null) {
+                cellText += " \nTable: " + assignedTableID;
+            }
+            
+            setText(cellText);
+            cellButton.setText("Auto Assign");
             setGraphic(cellButton);
         }
     }

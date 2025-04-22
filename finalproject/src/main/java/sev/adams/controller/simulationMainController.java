@@ -32,10 +32,9 @@ public class simulationMainController {
     @FXML
     void initialize() {
         // Register all of the simulationMainModel's observers, and set the myController field of our view
-        // none of this shit works right now, need to find a way to guarantee components are initialized before I start doing things with
-        //  them
+        // If any of this garbage makes it into the final submission I will cry tears of pure sorrow
         model.registerTableListObserver(tablesList);
-        model.notifyTableListObserver();
+        model.notifyTableListObserverFullUpdate();
 
         customersList.setController(this);
         model.registerCustomerListObserver(customersList);
