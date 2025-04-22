@@ -5,20 +5,26 @@ import javafx.scene.control.ListCell;
 import sev.adams.controller.simulationMainController;
 
 public class CustomersListButtonCell extends ListCell<String> {
-    // The button for this cell
+    // The button for this cell, can auto assign a table to a group or remove the group based on the context of b_assignedTable
     private Button cellButton;
     // The controller that we reference
     private simulationMainController myController;
-    
+    // If we have an assigned table ID to the customerGroup that this cell represents
+    private boolean b_assignedTable;
+
     public CustomersListButtonCell() {
         cellButton = new Button(this.getText());
+        b_assignedTable = this.getAssignedTableID() != null;
+
         // Set up what the button does when its pressed
         cellButton.setOnAction(event -> 
             {
             String item = this.getItem();
-            // TODO: Add a good way to unassign tables from a group
-            if (this.getAssignedTableID() == null) {
+            // This button will auto assign a group to a table if no table is assigne
+            if (this.b_assignedTable == false) {
                 myController.CustomerListCellButtonPressed(item);
+            } else { // If there is a table assigned the button will remove the group
+                myController.CustomerGroupRemovalRequsted(this.getCustomerGroupID(), this.getAssignedTableID());
             }
             }
         );
@@ -69,6 +75,7 @@ public class CustomersListButtonCell extends ListCell<String> {
     //  The info for an individual cell is 
     //  CustomerData is formatted like so:
     //      "customerGroupID:customerGroupSize:AssignedTableID(optional)"
+    // This will also update b_assignedTable to its correct value
     @Override
     protected void updateItem(String customerData, boolean empty) {
         super.updateItem(customerData, empty);
@@ -86,10 +93,22 @@ public class CustomersListButtonCell extends ListCell<String> {
             String cellText = "Group ID: " + customerGroupID + " \nSize: " + customerGroupSize;
             if (assignedTableID != null) {
                 cellText += " \nTable: " + assignedTableID;
+                // Update the flag for if we have an assigned table
+                b_assignedTable = true;
+            } else {
+                // Update the flag for if we have an assigned table
+                b_assignedTable = false;
             }
             
             setText(cellText);
-            cellButton.setText("Auto Assign");
+
+            // The main button has different effects based on if we have an assigned table, update the text to reflect this
+            if (b_assignedTable == true) {
+                cellButton.setText("Remove Group");
+            } else {
+                cellButton.setText("Auto Assign");
+            }
+
             setGraphic(cellButton);
         }
     }

@@ -55,7 +55,6 @@ public class CustomersListView extends ListView<String> {
 
             String thisItem = this.getItems().get(i);
             if (thisItem.startsWith(customerGroupID + ":")) { // This shouldn't have false positives unless customerGroup ID's are non-unique, which they shouldn't be
-                System.out.println("Found " + thisItem);
                 this.getItems().set(i, thisItem + ":" + assignedTable.getTableNumber()); // update the cell, it gets its data from its item string
                 return;
             }
@@ -63,5 +62,23 @@ public class CustomersListView extends ListView<String> {
 
         // We didn't find a customer, this is an error
         System.err.println("[!] Error! assignCustomerGroupToTable was called with an invalid customerGroupID!");
+    }
+
+    // Remove the cell from this CustomerListView with the associated customerGroupID
+    public void removeCustomerGroupCell(String customerGroupID) {
+        // Search for the cell with the associated customerGroupID
+        for (int i = 0; i < this.getItems().size(); i++) {
+
+            String thisItem = this.getItems().get(i);
+            if (thisItem.startsWith(customerGroupID + ":")) {
+                // Found the relevant cell that we want to remove
+                this.getItems().remove(i);
+                return;
+            }
+        }
+
+
+        // Could not find an associated cell, this is an error
+        System.err.println("[!] Error! removeCustomerGroupCell() was given an invalid customerGroupID: " + customerGroupID);
     }
 }

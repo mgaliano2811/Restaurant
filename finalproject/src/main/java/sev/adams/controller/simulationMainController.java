@@ -62,4 +62,11 @@ public class simulationMainController {
         // Tell the model to assign this group to a table
         model.autoAssignGroupToTable(customerGroupID);
     }
+
+    // A button was pressed in the customerList listview, requesting that a customerGroup be removed from the restaurant
+    //  assignedTableID is allowed to be null here
+    public void CustomerGroupRemovalRequsted(String customerGroupID, String assignedTableID) {
+        // Let the model know that it needs to update its customerGroups
+        model.removeCustomerGroup(customerGroupID, assignedTableID);
+    }
 }
