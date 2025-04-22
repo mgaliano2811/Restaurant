@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.util.Callback;
+import restaurant.Table;
 
 public class TablesListView extends ListView<String>{
 
@@ -24,20 +25,48 @@ public class TablesListView extends ListView<String>{
         });
     }
 
-    // Updates the list using a new source list
+    // Adds a new table to the listView
+    //  @pre given a table with a unique ID that is not already in this TablesListView
+    public void addTable(Table newTable) {
+        this.getItems().add("" + newTable.getTableNumber() + ":" + newTable.getMaxCapacity());
+    }
+
+    // Updates the list using a new source list of tables
     //  The info for an individual cell is two values seperated by a colon
     //  tableId:tableCapacity
-    public void updateList(ArrayList<String> newList) {
+    public void updateList(ArrayList<Table> newTables) {
         ObservableList<String> newObservableList = FXCollections.observableArrayList();
-        for (String tableString : newList) {
-            newObservableList.add(tableString);
+        this.setItems(newObservableList); // Clear the previous tables in the lsit
+
+        // Add all the tables anew
+        for (Table newTable : newTables) {
+            this.addTable(newTable);
         }
-        this.setItems(newObservableList);
     }
 
     // When we are clicked, open up an info panel?
     @FXML
     public void onClick() {
         System.out.println("hi");
+    }
+
+    // A customerGroup with the ID of customerGroupID was assigned to a table, represent this in the list
+    //  @pre assignedTable already has a representation cell inside this TablesListView
+    public void assignCustomerGroupToTable(Table assignedTable, String customerGroupID) {
+
+        // Find the assignedTable representation in our cells
+        //  This is fairly slow, but we dont have a lot of flexibility in how we deal with our cells so alas
+        for (int i = 0; i < this.getItems().size(); i++) {
+            String thisItem = this.getItems().get(i);
+
+            if (thisItem.startsWith(assignedTable.getTableNumber() + ":")) { // This avoids false positives so long as tableIDs are unique
+                // Found the relevant table cell
+                this.getItems().set(i, thisItem + ":" + customerGroupID);
+                return;
+            }
+        }
+
+        // Could not find a relevant table, this is an error
+        System.err.println("[!] Error! Could not find the given table in this TablesListView! TableID: " + assignedTable.getTableNumber());
     }
 }

@@ -13,6 +13,8 @@ import sev.adams.view.TablesListView;
 public class simulationMainController {
     private simulationMainModel model;
 
+    public final String debugString = "mainController";
+
     @FXML
     private CustomersListView customersList;
     @FXML
@@ -29,12 +31,12 @@ public class simulationMainController {
     // We can guarantee everything is injected when this is called, but cannot guarantee the same when the constructor is called
     @FXML
     void initialize() {
-        // Register all of the simulationMainModel's observers
-        // none of this shit works right now, need to find a way to guarantee components are initialized before I start doing things with
-        //  them
+        // Register all of the simulationMainModel's observers, and set the myController field of our view
+        // If any of this garbage makes it into the final submission I will cry tears of pure sorrow
         model.registerTableListObserver(tablesList);
-        model.notifyTableListObserver();
+        model.notifyTableListObserverFullUpdate();
 
+        customersList.setController(this);
         model.registerCustomerListObserver(customersList);
     }
 
@@ -42,5 +44,22 @@ public class simulationMainController {
     @FXML
     public void doTimeButton() {
         model.progressTime();
+    }
+
+    // A button was pressed in the customerList listview, respond to it by...TODO
+    //  cellInfo is a condensed string that represtents the customerGroup represented by the cell
+    //  cell info is formatted like the following:
+    //      "customerGroupID:customerGroupSize"
+    public void CustomerListCellButtonPressed(String cellInfo) {
+        if (cellInfo == null) {
+            System.err.println("[!] Error! CustomerListButtonCell has no associated Data!");
+            return;
+        }
+
+        // The ID this button represents
+        String customerGroupID = cellInfo.split(":")[0];
+
+        // Tell the model to assign this group to a table
+        model.autoAssignGroupToTable(customerGroupID);
     }
 }

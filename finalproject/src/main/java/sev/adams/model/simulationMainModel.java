@@ -31,8 +31,8 @@ public class simulationMainModel {
         restaurant = new Restaurant();
 
         // Add the tables
-        for (int i = 2; i <= 7; i++) { restaurant.addTable(new Table(i - 1, i)); }
-        restaurant.addTable(new Table(7, 7));
+        for (int i = 2; i <= 7; i++) { restaurant.addTable(i); }
+        restaurant.addTable(7);
         restaurant.debugPrint();
 
         // Fill in our other data
@@ -53,7 +53,9 @@ public class simulationMainModel {
     
     // Add a new customerGroup and let the customersList know
     private void newCustomerGroup() {
-        CustomerGroup newCustomerGroup = new CustomerGroup();
+        String thisCustomerGroupID = Integer.toString(currentTime); // Convienient, though might need to be changed at some point
+
+        CustomerGroup newCustomerGroup = new CustomerGroup(thisCustomerGroupID);
 
         // Add a random number of customers to this group
         for (int i = 0; i < 3; i++) {
@@ -65,9 +67,48 @@ public class simulationMainModel {
 
         // Notify the customersListObserver know something changed
         //  The view only cares (only needs to know) about a string representing some identifying data for the customerGroup
-        String customerGroupDataString = currentTime + ":" + newCustomerGroup.numCustomers();
+        String customerGroupDataString = thisCustomerGroupID + ":" + newCustomerGroup.numCustomers();
         customersListObserver.newCustomerGroup(customerGroupDataString);
     }
+
+    // Return the customer group that has the given ID
+    // @pre customerGroupID is in the customergroups
+    private CustomerGroup getCustomerGroupFromID(String customerGroupID) {
+        for (CustomerGroup thisGroup : customerGroups) {
+            if (customerGroupID.equals(thisGroup.getID())) {
+                return thisGroup;
+            }
+        }
+
+        // Couldnt find a customer group... this shouldn't happen unless something else went wrong
+        System.err.println("[!] Error! Could not find customerGroup with ID: " + customerGroupID);
+        return null;
+    }
+
+    // Given a customerGroupID, automatically assign a customer group to an open table in the restaurant
+    public void autoAssignGroupToTable(String customerGroupID) {
+        System.out.println("Assigning CustomerGroup " + customerGroupID);
+        // Get the customerGroup associated with this ID
+        CustomerGroup relevantCustomerGroup = this.getCustomerGroupFromID(customerGroupID);
+        // Automatically assign a table to this group
+        Table assignedTable = restaurant.seatPeople(relevantCustomerGroup.numCustomers());
+        if (assignedTable != null) {
+            System.out.println("Assigned Table ID: " + assignedTable.getTableNumber());
+        } else {
+            // Couldnt find a valid table
+            System.out.println("No valid table for this customer group!");
+            return;
+        }
+
+        // Now the information is sorted in the model, we need to let observers know so we can update info on the view
+        notifyTableViewObserverOfAssignedCustomerGroup(assignedTable, relevantCustomerGroup.getID());
+        notifyCustomerViewObserverOfAssignedCustomerGroup(assignedTable, relevantCustomerGroup.getID());
+
+    }
+
+    //////////////////////////////////////////////////////////////
+    /// Observer Methods
+    //////////////////////////////////////////////////////////////
 
     // We only have one table list observer, so fill it in
     public void registerTableListObserver(TablesListView tableListView) {
@@ -79,8 +120,29 @@ public class simulationMainModel {
         customersListObserver = customersListView;
     }
 
-    // Let the tableListObserver know that something changed
-    public void notifyTableListObserver() {
-        tableListObserver.updateList(restaurant.tableStringList());
+    // Completely clear and set the tableListObserver with a new set of tables
+    public void notifyTableListObserverFullUpdate() {
+        tableListObserver.updateList(restaurant.allTables());
     }
+
+    // Let the tableListObserver know that a new table was added
+    public void notifyTableListObserverOfNewTable(Table newTable) {
+        tableListObserver.addTable(newTable);
+    }
+
+    // Let the customersListObserver know that a customer group has been assigned to a table, and that it needs to update its view
+    //  assignedTable is the table that has been assigned
+    //  customerGroupID is the... well guess
+    private void notifyCustomerViewObserverOfAssignedCustomerGroup(Table assignedTable, String customerGroupID) {
+        customersListObserver.assignCustomerGroupToTable(assignedTable, customerGroupID);
+    }
+
+    // Let the customersListObserver know that a customer group has been assigned to a table, and that it needs to update its view
+    //  assignedTable is the table that has been assigned
+    //  customerGroupID is the... well guess
+    private void notifyTableViewObserverOfAssignedCustomerGroup(Table assignedTable, String customerGroupID) {
+        tableListObserver.assignCustomerGroupToTable(assignedTable, customerGroupID);
+    }
+
+    
 }

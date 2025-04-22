@@ -13,4 +13,7 @@ module sev.adams {
     exports sev.adams.model;
     exports sev.adams.view;
     exports sev.adams.observer;
+    
+    // Restaurant stuff
+    exports restaurant;
 }

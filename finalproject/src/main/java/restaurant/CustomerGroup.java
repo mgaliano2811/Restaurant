@@ -5,10 +5,18 @@ import java.util.Iterator;
 
 // A grouping of customers that can be sat somewhere
 public class CustomerGroup implements Iterable<Customer>{
+    // All the customers in this customerGroup
     ArrayList<Customer> customers;
+    // An ID that represents this customerGroup
+    String ID;
 
-    public CustomerGroup() {
+    public CustomerGroup(String newID) {
         customers = new ArrayList<Customer>();
+        ID = newID;
+    }
+
+    public String getID() {
+        return ID;
     }
 
     // Adds a customer to this group
