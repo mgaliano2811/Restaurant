@@ -106,6 +106,32 @@ public class simulationMainModel {
 
     }
 
+    // Remove the customerGroup with customerGroupID from our restaurant representation
+    // @pre There is a customerGroup with customerGroupID in our representation
+    // assignedTableID is allowed to be null, that just means this group didn't have an assignedTableID
+    public void removeCustomerGroup(String customerGroupID, String assignedTableID) {
+        // First remove the customerGroup from our representation
+        for (CustomerGroup thisGroup : customerGroups) {
+            if (thisGroup.getID() == customerGroupID) {
+                // Found the customerGroup that we want to remove
+                customerGroups.remove(thisGroup);
+                break;
+            }
+        }
+
+        // Free the assigned table (if we have an assigned table)
+        // TODO: Might not be the best idea to pass the assignedTableID around like this, we should make it so its stored in the restaurant?
+        if (assignedTableID != null) {
+            Table freedTable = restaurant.getTable(Integer.parseInt(assignedTableID));
+            restaurant.freeTable(Integer.parseInt(assignedTableID));
+            // Let the tablesListObserver know that the table was freed
+            notifyTableViewObserverOfFreedTable(freedTable);
+        }
+
+        // Let our CustomerViewObserver that the customerGroup was removed
+        notifyCustomerViewObserverOfRemovedCustomerGroup(customerGroupID);
+    }
+
     //////////////////////////////////////////////////////////////
     /// Observer Methods
     //////////////////////////////////////////////////////////////
@@ -144,5 +170,16 @@ public class simulationMainModel {
         tableListObserver.assignCustomerGroupToTable(assignedTable, customerGroupID);
     }
 
+    // Let the customerListObserver know that a customerGroup was removed from our representation
+    //  @pre the customerViewList has a cell with a customerGroupID
+    private void notifyCustomerViewObserverOfRemovedCustomerGroup(String customerGroupID) {
+        customersListObserver.removeCustomerGroupCell(customerGroupID);
+    }
+
+    // Let the TableListObserver know that the table with tableID had its assigned customerGroup was unassigned, and so it should
+    //  update itself
+    private void notifyTableViewObserverOfFreedTable(Table table) {
+        tableListObserver.tableUnassignCustomerGroup(table);
+    }
     
 }

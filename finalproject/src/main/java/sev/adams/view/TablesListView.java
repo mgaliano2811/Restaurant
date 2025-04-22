@@ -69,4 +69,22 @@ public class TablesListView extends ListView<String>{
         // Could not find a relevant table, this is an error
         System.err.println("[!] Error! Could not find the given table in this TablesListView! TableID: " + assignedTable.getTableNumber());
     }
+
+    // The table with the given tableID had its assigned customerGroup unassigned, update the relevant cell to reflect this
+    //  @pre a cell with the referenced tableID exists here
+    public void tableUnassignCustomerGroup(Table table) {
+        // Find the cell with the relevant table
+        for (int i = 0; i < this.getItems().size(); i++) {
+
+            String thisItem = this.getItems().get(i);
+            if (thisItem.startsWith(table.getTableNumber() + ":")) {
+                // Found our cell, update it without the assignedCustomerGroup
+                this.getItems().set(i, "" + table.getTableNumber() + ":" + table.getMaxCapacity());
+                return;
+            }
+        }
+
+        // Could not find the relevant cell, this should not happen and is an error
+        System.err.println("[!] Error! tableUnassignCustomerGroup() was given an invalid tableID:" + table.getTableNumber());
+    }
 }
