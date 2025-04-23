@@ -13,7 +13,7 @@
     <Text text="Welcome! Restaurant Name: " 
         GridPane.columnIndex="0" GridPane.rowIndex="0"
         GridPane.columnSpan="2"/>
-    <TextField fx:id="restaurantNameField" text="Krusty Krab"
+    <TextField fx:id="restaurantNameField" text="Krusty Krab" onAction="#checkRestaurantNameField"
         GridPane.columnIndex="1" GridPane.rowIndex = "0"/>
     <Text text="        └> Load File? (Dont need to input below if already created) :"
         GridPane.columnIndex="0" GridPane.rowIndex = "1"/>

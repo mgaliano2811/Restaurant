@@ -34,10 +34,11 @@ public class simulationMainController {
         // Register all of the simulationMainModel's observers, and set the myController field of our view
         // If any of this garbage makes it into the final submission I will cry tears of pure sorrow
         model.registerTableListObserver(tablesList);
-        model.notifyTableListObserverFullUpdate();
-
         customersList.setController(this);
         model.registerCustomerListObserver(customersList);
+
+        // After the observers are filled in, we can fully initialize the model
+        model.fullInit();
     }
 
     // Progress time by one unit

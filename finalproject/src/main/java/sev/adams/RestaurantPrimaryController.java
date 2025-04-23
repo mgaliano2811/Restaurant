@@ -24,6 +24,7 @@ public class RestaurantPrimaryController {
     @FXML
     private Slider customerFrequencySlider; // The chance for a customer to come in during a time progression
     
+    private String restaurantName;
     private int numTables;
     private int minTables;
     private int maxTables;
@@ -31,6 +32,7 @@ public class RestaurantPrimaryController {
     @FXML
     void initialize() {
         // Default values
+        restaurantName = restaurantNameField.getText();
         numTables = Integer.parseInt(tableField.getText());
         minTables = Integer.parseInt(minimumTableField.getText());
         maxTables = Integer.parseInt(maximumTableField.getText());
@@ -41,8 +43,36 @@ public class RestaurantPrimaryController {
     private void StartRestaurant() throws IOException {
         // Create a save file, only start if it is successful
         if (createSaveFile()) {
+            // Save important data that the next scene needs to know
+            createDataTransferFile(getRestaurantSaveFilePath());
             RestaurantApp.setRoot("simulationMain");
         }
+    }
+
+    // Get the string of the save file path that this restaurant will/has created
+    private String getRestaurantSaveFilePath() {
+        return "data/" + restaurantNameField.getText() + ".txt";
+    }
+
+    // Make sure that the restaurantNameField is kosher
+    @FXML
+    private void checkRestaurantNameField() {
+        String newName = restaurantNameField.getText();
+
+        // Just a bunch of checks
+        if (newName.contains(":")) { // Will break our key value sorting
+            resetRestaurantName();
+        } else if (newName.equals("dataTransfer")) { // NOT ALLOWED, dont try to overwrite my shit, yes this is a bad solution but better ones are more complicated
+            resetRestaurantName();
+        } else {
+            // If we get here, its a valid restuarant name
+            restaurantName = restaurantNameField.getText();
+        }
+    }
+
+    // Helper for if we need to reset the restuarant name because the user put something in that they shouldnt have
+    private void resetRestaurantName() {
+        restaurantNameField.setText(restaurantName);
     }
 
     // helper clamp method, why does java not have this in util...
@@ -76,7 +106,7 @@ public class RestaurantPrimaryController {
         int newNumber;
         try {
             newNumber = Integer.parseInt(minimumTableField.getText());
-            minTables = clamp(newNumber, 1, 77777);
+            minTables = clamp(newNumber, 1, maxTables);
             minimumTableField.setText(Integer.toString(minTables));
         } catch (Exception e) {
             minimumTableField.setText(Integer.toString(minTables));
@@ -89,7 +119,7 @@ public class RestaurantPrimaryController {
         int newNumber;
         try {
             newNumber = Integer.parseInt(maximumTableField.getText());
-            maxTables = clamp(newNumber, 1, 77777);
+            maxTables = clamp(newNumber, minTables, 77777);
             maximumTableField.setText(Integer.toString(maxTables));
         } catch (Exception e) {
             maximumTableField.setText(Integer.toString(maxTables));
@@ -116,7 +146,7 @@ public class RestaurantPrimaryController {
             // Create the data directory if it doesnt already exist
             createDataDirectory();
 
-            restaurantFile = new File("data/" + restaurantNameField.getText() + ".txt");
+            restaurantFile = new File(getRestaurantSaveFilePath());
             boolean b_fileAlreadyExists = !restaurantFile.createNewFile(); // Wont actually create a new file if it already exists
 
             // If the file already exists and the user requested to load a previous file, then we are done!
@@ -159,6 +189,36 @@ public class RestaurantPrimaryController {
         File dataDirectory = new File(currentDirectory + File.separator + "data");
         dataDirectory.mkdir(); // This wont overwrite anything if it already exists, so were golden, hopefully
     }
+
+    // Write info related to THIS RUN of the program to a file that everything knows, so that we can pass information between scenes
+    //  An example of info we want to pass on is the path to the save file to use for this file
+    //  we of course use key value pairs for this file
+    private void createDataTransferFile(String restaurantSaveFilePath) {
+        
+        try {
+            // We need this directory to put the dataTransfer file into
+            createDataDirectory();
+
+            File transferDataFile = new File(getDataTransferFilePath());
+            transferDataFile.createNewFile();
+            FileWriter writer = new FileWriter(transferDataFile);
+
+            writer.write("restaurantSaveFilePath:" + restaurantSaveFilePath + "\n");
+
+            writer.close();
+        } catch (Exception e) {
+            // We dont really have a recourse for if this fails, it wont be the users fault, so i guess just crash...
+            System.err.println("[!] Error! Something bad happened and we couldnt create the data transfer file! Crashing...");
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    // So that everybody knows the location of the dataTransfer file
+    // This would be better as a global variable but im pretty sure that computer science professors are allergic to those
+    public static String getDataTransferFilePath() {
+        return "data/dataTransfer";
+    } 
 
     // Key Value getters for all of the data fields, ":" is what we use to seperate them so no funny business
     private String restaurantNameKeyValue() {

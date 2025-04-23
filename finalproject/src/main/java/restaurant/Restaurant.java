@@ -172,7 +172,7 @@ public class Restaurant {
     /* Design by contract:
      * @pre: Don't pass in a negative
      */
-    public void addTable(int capacity) {
+    public Table addTable(int capacity) {
         Table t = new Table (assignTableNumber(), capacity);
         freeTables.add(t);
         if (tablesByCapacity.keySet().contains(capacity)) {
@@ -183,6 +183,8 @@ public class Restaurant {
             ArrayList<Table> listToAdd = tablesByCapacity.get(capacity);
             listToAdd.add(t);
         }
+
+        return t; // Tables are immutable baby, I can do what I want baby
     }
 
     // Helper to get the minimum table number available 
