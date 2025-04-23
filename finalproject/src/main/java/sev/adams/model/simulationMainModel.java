@@ -1,44 +1,170 @@
 package sev.adams.model;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.stream.IntStream;
 
 import restaurant.Customer;
 import restaurant.CustomerGroup;
 import restaurant.Restaurant;
 import restaurant.Table;
+import sev.adams.RestaurantPrimaryController;
 import sev.adams.view.CustomersListView;
 import sev.adams.view.TablesListView;
 
 // The model holds all of our actual data
 public class simulationMainModel {
     // core restaurant class
-    Restaurant restaurant;
+    private Restaurant restaurant;
 
     // Observers
-    TablesListView tableListObserver;
-    CustomersListView customersListObserver;
+    private TablesListView tableListObserver;
+    private CustomersListView customersListObserver;
 
     /// Model data
     // How many time units have "passed"
-    int currentTime;
+    private int currentTime;
     // All of the customerGroups currently in the restaurant
-    ArrayList<CustomerGroup> customerGroups;
+    private ArrayList<CustomerGroup> customerGroups;
     // The percentage chance for a customer group to come in per time unit. 0-1 double;
-    double customerFrequency;
+    private double customerFrequency;
+    // The restaurant name
+    private String restaurantName;
 
     public simulationMainModel() {
-        // Create the restaurant
-        restaurant = new Restaurant();
-
-        // Add the tables
-        for (int i = 2; i <= 7; i++) { restaurant.addTable(i); }
-        restaurant.addTable(7);
-        restaurant.debugPrint();
-
-        // Fill in our other data
-        currentTime = 0;
         customerGroups = new ArrayList<CustomerGroup>();
-        customerFrequency = 0.7;
+    }
+
+
+    // This should be called right after actual construction
+    //  The reason it isnt a constructor is because we need our observers to be filled in by the controller first
+    public void fullInit() {
+        // Get the save file we need to create the restaurant
+        String restaurantSaveFilePath = getRestaurantSaveFilePath();
+
+        // Create the restaurant
+        restaurant = createRestaurantFromSaveFile(restaurantSaveFilePath);
+        System.out.println("Created Restaurant: " + restaurantName);
+    }
+
+    // Get the path for the save file we need to make the restaurant
+    private String getRestaurantSaveFilePath() {
+        String restaurantSaveFilePath = null;
+
+        try {
+            // Get the file that we will read this data from
+            File dataTransferFile = new File(RestaurantPrimaryController.getDataTransferFilePath());
+            BufferedReader reader = new BufferedReader(new FileReader(dataTransferFile));
+
+            // Read until we find the field that we want
+            String thisLine = reader.readLine();
+            while (thisLine != null) {
+                // First is key, second is value
+                String[] keyValue = thisLine.split(":");
+                if (keyValue[0].equals("restaurantSaveFilePath")) {
+                    // Found ya
+                    restaurantSaveFilePath = keyValue[1];
+                    break;
+                }
+                thisLine = reader.readLine();
+            }
+            reader.close();
+        } catch (Exception e) {
+            // We dont have a recourse if this happens, just crash
+            System.err.println("[!] Error! Could not get the restuarant save file! Crashing...");
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        if (restaurantSaveFilePath == null) {
+            // This will probably cause some other crash, but thats not our problem,
+            //  and luckily it will immediately happen
+            System.err.println("[!] Error! Could not get the restuarant save file!");
+        }
+
+        return restaurantSaveFilePath;
+    }
+
+    // Create a restuarant from a given save file.
+    //  Simpler than it seems, everything in the save file is just a key value pair, so we just piece together the information we need
+    //  from that without regard to the order.
+    // This will also fill in some of the variables on this model that are held in the save file
+    // Returns the restaurant that was created
+    // @pre The restaurantSaveFilePath references a save file that has all the required values, this should be
+    //  guaranteed by RestaurantPrimaryController
+    private Restaurant createRestaurantFromSaveFile(String restaurantSaveFilePath) {
+        Restaurant newRestaurant = null;
+        
+        try {
+            // All of the values that we will read in
+            String restaurantName = "ERROR";
+            int numTables = 7;
+            int minTableCap = 1;
+            int maxTableCap = 7;
+            double customerFrequency = 0.7;
+
+            // Read the save file and get all the values that we will need
+            File restaurantSaveFile = new File(restaurantSaveFilePath);
+            BufferedReader reader = new BufferedReader(new FileReader(restaurantSaveFile));
+            String thisLine = reader.readLine();
+            while (thisLine != null) {
+                // The key is the first element, the second element is the value
+                String[] keyValue = thisLine.split(":");
+                String key = keyValue[0];
+                String value = keyValue[1];
+
+                if (key.equals("restaurantName")) {
+                    restaurantName = value;
+                } else if (key.equals("numTables")) {
+                    numTables = Integer.parseInt(value);
+                } else if (key.equals("minTableCap")) {
+                    minTableCap = Integer.parseInt(value);
+                } else if (key.equals("maxTableCap")) {
+                    maxTableCap = Integer.parseInt(value);
+                } else if (key.equals("customerFrequency")) {
+                    customerFrequency = Double.parseDouble(value);
+                }
+
+                thisLine = reader.readLine();
+            }
+            reader.close();
+
+            // At this point we have all of the needed values, time to fill them in where needed
+            this.restaurantName = restaurantName;
+            newRestaurant = new Restaurant();
+            this.addTables(newRestaurant, numTables, minTableCap, maxTableCap);
+            this.customerFrequency = customerFrequency;
+
+        } catch (Exception e) {
+            // Another situation where I feel we have no recourse, and its best to just crash
+            System.err.println("[!] Error! Could not create a restaurant! Crashing...");
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        if (newRestaurant == null) {
+            // Another situation where I feel we have no recourse, and its best to just crash
+            System.err.println("[!] Error! Could not create a restaurant! Crashing...");
+            System.exit(1);
+        }
+
+        return newRestaurant;
+    }
+
+
+    // Create numTables tables with a capacity in range [minTableCap, maxTableCap]
+    // This will notify observers that tables were created
+    // @pre minTableCap <= maxTableCap, newRestaurant not null, 0 <= numTables
+    private void addTables(Restaurant someRestaurant, int numTables, int minTableCap, int maxTableCap) {
+        Random random = new Random();
+        for (int i = 0; i < numTables; i++) {
+            Table newTable = someRestaurant.addTable(random.ints(minTableCap, maxTableCap).findFirst().getAsInt());
+            notifyTableListObserverOfNewTable(newTable);
+        }
     }
 
     // Progress time by one unit, and alert things that care
