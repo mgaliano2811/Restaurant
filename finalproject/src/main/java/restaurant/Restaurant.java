@@ -64,8 +64,8 @@ public class Restaurant {
         int count = noOfPeople;
         while (true) {
             if (count > biggestTable()) {
-                int group1 = ((Double)Math.floor(noOfPeople/2)).intValue(); // Take the floor of people/2
-                int group2 = ((Double)Math.ceil(noOfPeople/2)).intValue();  // Take the ceiling of people/2
+                int group1 = ((Double)Math.floor(noOfPeople/2.0)).intValue(); // Take the floor of people/2
+                int group2 = ((Double)Math.ceil(noOfPeople/2.0)).intValue();  // Take the ceiling of people/2
                 actuallySeatPeople(group1);
                 actuallySeatPeople(group2);
                 return null;
@@ -115,13 +115,14 @@ public class Restaurant {
         System.err.println("There is no table by that ID");
     }
 
+    // THIS IS AN UNUSED FUNCTION, COMMENTING IT SO COVERAGE IS NOT AFFECTED
     // Helper to count total number of tables
-    private int numberOfTables() {
-        int count = 0;
-        for (Table t: freeTables) count++;
-        for (Table t: occupiedTables) count++;
-        return count;
-    }
+    // private int numberOfTables() {
+    //     int count = 0;
+    //     for (Table t: freeTables) count++;
+    //     for (Table t: occupiedTables) count++;
+    //     return count;
+    // }
 
     // Helper to get the biggest Table in the restaurant
     private int biggestTable() {
@@ -132,17 +133,18 @@ public class Restaurant {
         return max;
     }
 
+    // COMMENTED OUT FOR COVERAGE REASONSR COVERAGE REASONS
     // Debug funciton
-    public void debugPrint() {
-        for (int i : tablesByCapacity.keySet()) {
-            System.out.print("Tables with " + i + " Capacity: ");
-            for (Table t : tablesByCapacity.get(i)) {
-                System.out.println(t.toString());
-                System.out.print("|");
-            }
-            System.out.print("\n");
-        }
-    }
+    // public void debugPrint() {
+    //     for (int i : tablesByCapacity.keySet()) {
+    //         System.out.print("Tables with " + i + " Capacity: ");
+    //         for (Table t : tablesByCapacity.get(i)) {
+    //             System.out.println(t.toString());
+    //             System.out.print("|");
+    //         }
+    //         System.out.print("\n");
+    //     }
+    // }
 
     /* Design by contract:
      * @pre: Don't pass in a negative
