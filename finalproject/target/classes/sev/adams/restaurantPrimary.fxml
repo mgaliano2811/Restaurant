@@ -10,36 +10,39 @@
     xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="70" vgap="10">
 <padding><Insets top="25" right="25" bottom="10" left="25"/></padding>
 
-    <Text text="Welcome! Restaurant Name: " 
+    <Text text="Welcome! Make sure to press [ENTER] after input!"
         GridPane.columnIndex="0" GridPane.rowIndex="0"
         GridPane.columnSpan="2"/>
+
+    <Text text="Restaurant Name:"
+        GridPane.columnIndex="0" GridPane.rowIndex="1"/>
     <TextField fx:id="restaurantNameField" text="Krusty Krab" onAction="#checkRestaurantNameField"
-        GridPane.columnIndex="1" GridPane.rowIndex = "0"/>
-    <Text text="        └> Load File? (Dont need to input below if already created) :"
-        GridPane.columnIndex="0" GridPane.rowIndex = "1"/>
-    <CheckBox fx:id="loadCheckBox"
         GridPane.columnIndex="1" GridPane.rowIndex = "1"/>
+    <Text text="        └> Load File? (Dont need to input below if already created) :"
+        GridPane.columnIndex="0" GridPane.rowIndex = "2"/>
+    <CheckBox fx:id="loadCheckBox"
+        GridPane.columnIndex="1" GridPane.rowIndex = "2"/>
     
     <Text text="Number of Tables:"
-        GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        GridPane.columnIndex="0" GridPane.rowIndex="3"/>
     <TextField fx:id="tableField" text="7" onAction="#numTablesChanged"
-        GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
     <Text text="        └>Minimum Table Capacity:"
-        GridPane.columnIndex="0" GridPane.rowIndex = "3"/>
-    <TextField fx:id="minimumTableField" text="1" onAction="#minTablesChanged"
-        GridPane.columnIndex="1" GridPane.rowIndex = "3"/>
-        <Text text="        └>Maximum Table Capacity:"
         GridPane.columnIndex="0" GridPane.rowIndex = "4"/>
-    <TextField fx:id="maximumTableField" text="7" onAction="#maxTablesChanged"
+    <TextField fx:id="minimumTableField" text="1" onAction="#minTablesChanged"
         GridPane.columnIndex="1" GridPane.rowIndex = "4"/>
+        <Text text="        └>Maximum Table Capacity:"
+        GridPane.columnIndex="0" GridPane.rowIndex = "5"/>
+    <TextField fx:id="maximumTableField" text="7" onAction="#maxTablesChanged"
+        GridPane.columnIndex="1" GridPane.rowIndex = "5"/>
     
     
     <Text text="Customer Frequency (0-1):"
-        GridPane.columnIndex="0" GridPane.rowIndex = "5"/>
+        GridPane.columnIndex="0" GridPane.rowIndex = "6"/>
     <Slider fx:id="customerFrequencySlider" value="0.7" min="0" max="1" 
-        GridPane.columnIndex="1" GridPane.rowIndex = "5"/>
-    <Text text="1" GridPane.columnIndex="2" GridPane.rowIndex = "5"/>
+        GridPane.columnIndex="1" GridPane.rowIndex = "6"/>
+    <Text text="1" GridPane.columnIndex="2" GridPane.rowIndex = "6"/>
 
     <Button text="Start" onAction="#StartRestaurant"
         GridPane.columnIndex="0" GridPane.rowIndex="7" GridPane.columnSpan="2"/>

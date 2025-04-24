@@ -34,6 +34,8 @@ public class simulationMainModel {
     private double customerFrequency;
     // The restaurant name
     private String restaurantName;
+    // The maximum capacity of any table in our restaurant
+    private int maxTableCap;
 
     public simulationMainModel() {
         customerGroups = new ArrayList<CustomerGroup>();
@@ -124,7 +126,8 @@ public class simulationMainModel {
                 } else if (key.equals("minTableCap")) {
                     minTableCap = Integer.parseInt(value);
                 } else if (key.equals("maxTableCap")) {
-                    maxTableCap = Integer.parseInt(value);
+                    this.maxTableCap = Integer.parseInt(value);
+                    maxTableCap = this.maxTableCap; //:trollface:
                 } else if (key.equals("customerFrequency")) {
                     customerFrequency = Double.parseDouble(value);
                 }
@@ -184,7 +187,9 @@ public class simulationMainModel {
         CustomerGroup newCustomerGroup = new CustomerGroup(thisCustomerGroupID);
 
         // Add a random number of customers to this group
-        for (int i = 0; i < 3; i++) {
+        // Choose how many customers will come in, based on the max capacity that a table can have
+        int customerNum = new Random().ints(1, maxTableCap).findFirst().getAsInt();
+        for (int i = 0; i < customerNum; i++) {
             newCustomerGroup.addCustomer(new Customer());
         }
 
