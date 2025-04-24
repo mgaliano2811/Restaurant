@@ -1,9 +1,10 @@
 package tests;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.Iterator;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import restaurant.menu.ItemType;
@@ -29,13 +30,13 @@ public class CustomerTests {
 
     @Test
     public void testCustomerGroupCreation() {
-        restaurant.CustomerGroup group = new restaurant.CustomerGroup();
+        restaurant.CustomerGroup group = new restaurant.CustomerGroup("123");
         assertNotNull(group);
     }
 
     @Test
     public void testAddCustomerToGroup() {
-        restaurant.CustomerGroup group = new restaurant.CustomerGroup();
+        restaurant.CustomerGroup group = new restaurant.CustomerGroup("123");
         restaurant.Customer customer = new restaurant.Customer();
         group.addCustomer(customer);
         assertEquals(1, group.numCustomers());
@@ -44,7 +45,7 @@ public class CustomerTests {
 
     @Test
     public void testAddManyCustomersToGroup() {
-        restaurant.CustomerGroup group = new restaurant.CustomerGroup();
+        restaurant.CustomerGroup group = new restaurant.CustomerGroup("123");
         restaurant.Customer customer1 = new restaurant.Customer();
         restaurant.Customer customer2 = new restaurant.Customer();
         restaurant.Customer customer3 = new restaurant.Customer();
@@ -60,7 +61,7 @@ public class CustomerTests {
 
     @Test
     public void testGetBill() {
-        restaurant.CustomerGroup group = new restaurant.CustomerGroup();
+        restaurant.CustomerGroup group = new restaurant.CustomerGroup("123");
         restaurant.Customer customer1 = new restaurant.Customer();
         restaurant.Customer customer2 = new restaurant.Customer();
         group.addCustomer(customer1);
