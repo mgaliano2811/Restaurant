@@ -5,6 +5,8 @@ import java.lang.Math;
 import java.util.HashMap;
 import java.util.List;
 
+import database.Database;
+
 public class Restaurant {
     private final String restaurantName; // Final cause why not fuck it
     private ArrayList<Table> freeTables;        // Use ArrayList because number of tables is limited
@@ -12,9 +14,11 @@ public class Restaurant {
     // Have the list of tables divided by their maxCapacity to make seating easier
     private HashMap<Integer, ArrayList<Table>> tablesByCapacity;
     private HashMap<Waiter, ArrayList<Table>> waitersToTable;   // Tables assigned to each waiter
+    private ArrayList<Order> activeOrders;
 
     private int maxCapacity;
     private int currCapacity;
+    private Database db;
     
     public Restaurant() {
         freeTables = new ArrayList<Table>();
@@ -23,7 +27,8 @@ public class Restaurant {
         maxCapacity = 200; // For now
         currCapacity = 0;
         tablesByCapacity = new HashMap<Integer, ArrayList<Table>>();
-        waitersToTable   = new HashMap<Waiter, ArrayList<Table>>();
+        waitersToTable = new HashMap<Waiter, ArrayList<Table>>();
+        db = new Database();
     }
 
     public String getRestaurantName() { return restaurantName; }    // Get name
@@ -112,14 +117,6 @@ public class Restaurant {
             }
         }
         System.err.println("There is no table by that ID");
-    }
-
-    // Helper to count total number of tables
-    private int numberOfTables() {
-        int count = 0;
-        for (Table t: freeTables) count++;
-        for (Table t: occupiedTables) count++;
-        return count;
     }
 
     // Helper to get the biggest Table in the restaurant
@@ -226,12 +223,35 @@ public class Restaurant {
         waitersToTable.get(waiterToAssign).add(table);      // Assign the table
     }
 
-    /*
-     * This will be used in the view to add waiter to database and
-     * to the restaurant, so we can assign tables (has to be done in parallel)
-     * We will pass in the same waiter object because its immutable, so we will not
-     * have any duplicates
-     */
-    public void addWaiter(Waiter w) { waitersToTable.put(w, new ArrayList<Table>()); }
+    public void addEmployee(String name, String lastname, StaffType type, double salary) {
+        Staff newEmployee = db.addEmployee(name, lastname, type, salary);
+        if (type.equals(StaffType.WAITER) && newEmployee instanceof Waiter)
+            waitersToTable.put((Waiter)newEmployee, new ArrayList<Table>());
+    }
 
+    public ArrayList<Waiter> getWaiterWithMostTips() {
+        ArrayList<Waiter> waiters = db.waiterWithMostTips();
+        if (waiters.size() == 0) {
+            System.err.println("Waiters are useless they all have 0 tips");
+        }
+        return waiters;
+    }
+
+    public void makeOrder() {
+        Integer newNumber = db.getOrders().size() + 1;
+        Order newOrder = new Order(newNumber);
+        activeOrders.add(newOrder);
+    }
+
+    /* Do this when we have received payment. Here we add the order to the 
+     * database, since we know now it cannot change.
+     * @pre: Don't pass in a null
+     */
+    public void closeOrder(Order o) {
+        if (activeOrders.contains(o)) {
+            activeOrders.remove(o);
+            db.addOrder(o);
+        } else
+            System.err.println("Order doesn't exist or has already been closed");
+    }
 }

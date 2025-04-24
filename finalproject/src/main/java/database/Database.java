@@ -9,6 +9,7 @@ public class Database {
     // HashSet to look up things in constant time (I want pretty points)
     private HashSet<Staff> employees;
     private Payroll payroll;
+    private HashSet<Order> allOrders;
 
     public Database() {
         employees = new HashSet<Staff>();
@@ -23,7 +24,7 @@ public class Database {
     }
 
     // Create and add employee (basically we hired someone)
-    public void addEmployee(String name, String lastname, StaffType type, double salary) {
+    public Staff addEmployee(String name, String lastname, StaffType type, double salary) {
         int employeeID = generateUniqueID();
         Staff newEmployee;
         if (type.equals(StaffType.WAITER))           // Create waiter
@@ -35,6 +36,7 @@ public class Database {
         else newEmployee = new Staff(lastname, name, employeeID);   // Any other staff
         employees.add(newEmployee);                     // Add to employees
         payroll.addEmployee(newEmployee, salary);       // Add to payroll records
+        return newEmployee;
     }
 
     // Will complete this later when we have a view
@@ -110,4 +112,35 @@ public class Database {
 
     // Return only shallow copy cause staff is immutable
     public ArrayList<Staff> getEmployees() { return new ArrayList<Staff>(employees); }
+
+    public Staff getEmployee(int ID) {
+        for (Staff s: employees){
+            if (s.getEmloyeeID() == ID)
+                return s;
+        }
+        return null;
+    }
+
+    public ArrayList<Waiter> waiterWithMostTips() {
+        ArrayList<Waiter> waiters = new ArrayList<Waiter>();
+        double maxTips = 0.0;
+        for (Staff s: employees) {
+            if (s instanceof Waiter) {
+                double tips = payroll.getTip(s.getEmloyeeID());
+                if (tips > maxTips + 0.01) {  // New max, clear the list
+                    maxTips = tips;
+                    waiters.clear();
+                    waiters.add((Waiter) s);
+                } else if (Math.abs(tips - maxTips) <= 0.01) {  // Close enough to be considered equal
+                    waiters.add((Waiter) s);
+                }
+            }
+        }
+        return waiters;
+    }
+
+    public HashSet<Order> getOrders() { return new HashSet<Order>(allOrders); }
+
+    public void addOrder(Order o) { allOrders.add(o); }
+
 }

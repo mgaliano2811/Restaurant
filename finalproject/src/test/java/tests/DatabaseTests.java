@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import database.Database;
 import restaurant.Staff;
 import restaurant.StaffType;
+import restaurant.Waiter;
 
 /**
  * Testcases for Database and Payroll
@@ -161,5 +162,32 @@ public class DatabaseTests {
         assertNull(db.getSalary(-30));
         assertNull(db.getPayrollInfo(-30));
         db.fireEmployee("Pepe", "Perez");
+        assertNull(db.getEmployee(-40));
+        db.fireEmployee(-50);
+    }
+
+    // Test get waiter with the most tips
+    @Test
+    public void testWaiterWithMostTips() {
+        db.addEmployee("Pepe", "Perez", StaffType.WAITER, 30000);
+        db.addEmployee("Ana", "Garcia", StaffType.WAITER, 30000);
+        db.addEmployee("Luis", "Torres", StaffType.WAITER, 30000);
+        db.addEmployee("Gabriela", "Vargas", StaffType.MANAGER, 5000);
+
+        ArrayList<Staff> employees = db.getEmployees();
+        int pepeID = employees.get(0).getEmloyeeID();
+        int anaID = employees.get(1).getEmloyeeID();
+        int luisID = employees.get(2).getEmloyeeID();
+
+        db.recordTip(pepeID, 50.0);
+        db.recordTip(anaID, 75.0);   // highest
+        db.recordTip(luisID, 75.00); // equal due to tolerance
+
+        ArrayList<Waiter> topWaiters = db.waiterWithMostTips();
+
+        assertEquals(2, topWaiters.size());
+
+        assertTrue(topWaiters.contains(db.getEmployee(anaID)));
+        assertTrue(topWaiters.contains(db.getEmployee(luisID)));
     }
 }
