@@ -24,7 +24,7 @@ public class Order {
     // }
 
     public ArrayList<MenuItem> getOrderItems() {
-        return new ArrayList<>(orderItems);
+        return new ArrayList<MenuItem>(orderItems);
     }
 
     public double getTotalPrice() {

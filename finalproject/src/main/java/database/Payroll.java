@@ -18,6 +18,18 @@ import restaurant.*;
     public Payroll() {
         payrollRecords = new HashMap<>();   // Initialize hashmap
     }
+
+    // Register a payment to an employee
+    public void payEmployee(int employeeID) {
+        PayrollRecord p = payrollRecords.get(employeeID);
+        p.registerPayment();
+    }
+
+    // Get all time earnings of a certain employee
+    public double getAllEarnings(int employeeID) {
+        PayrollRecord p = payrollRecords.get(employeeID);
+        return p.getAllTimeEarnings();
+    }
     
     // Adds an employee to the payroll with specified base salary
     public void addEmployee(Staff employee, double salary) {
@@ -66,6 +78,7 @@ import restaurant.*;
      */
     public class PayrollRecord {
         private Staff employee;     // The staff type
+        private double allTimeEarnings;
         private double salary;
         private double tips;        // Will be 0 if employee is not a waiter
         
@@ -73,9 +86,14 @@ import restaurant.*;
             this.employee = employee;
             this.salary = salary;
             this.tips = 0.0;
+            this.allTimeEarnings = 0.0;
         }
                 
         public double getSalary() { return salary; }
+
+        public void registerPayment() { allTimeEarnings += salary; }
+
+        public double getAllTimeEarnings() { return this.allTimeEarnings; }
         
         public void setSalary(double salary) { this.salary = salary; }
         
