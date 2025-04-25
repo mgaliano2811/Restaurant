@@ -120,6 +120,9 @@ public class simulationMainModel {
             int numWaiters = 7;
             int numChefs = 7;
             int numManagers = 7;
+            int waiterPay = 77;
+            int chefPay = 77;
+            int managerPay = 77;
 
             // Read the save file and get all the values that we will need
             File restaurantSaveFile = new File(restaurantSaveFilePath);
@@ -148,6 +151,12 @@ public class simulationMainModel {
                     numChefs = Integer.parseInt(value);
                 } else if (key.equals("numManagers")) {
                     numManagers = Integer.parseInt(value);
+                } else if (key.equals("waiterPay")) {
+                    waiterPay = Integer.parseInt(value);
+                } else if (key.equals("chefPay")) {
+                    chefPay = Integer.parseInt(value);
+                } else if (key.equals("managerPay")) {
+                    managerPay = Integer.parseInt(value);
                 }
 
                 thisLine = reader.readLine();
@@ -161,13 +170,13 @@ public class simulationMainModel {
             this.customerFrequency = customerFrequency;
 
             for (int i = 0; i < numWaiters; i++) {
-                newRestaurant.addEmployee(Staff.randomFirstName(), Staff.randomLastName(), StaffType.WAITER, 77);
+                newRestaurant.addEmployee(Staff.randomFirstName(), Staff.randomLastName(), StaffType.WAITER, waiterPay);
             }
             for (int i = 0; i < numChefs; i++) {
-                newRestaurant.addEmployee(Staff.randomFirstName(), Staff.randomLastName(), StaffType.CHEF, 77);
+                newRestaurant.addEmployee(Staff.randomFirstName(), Staff.randomLastName(), StaffType.CHEF, chefPay);
             }
             for (int i = 0; i < numManagers; i++) {
-                newRestaurant.addEmployee(Staff.randomFirstName(), Staff.randomLastName(), StaffType.MANAGER, 77);
+                newRestaurant.addEmployee(Staff.randomFirstName(), Staff.randomLastName(), StaffType.MANAGER, managerPay);
             }
 
         } catch (Exception e) {

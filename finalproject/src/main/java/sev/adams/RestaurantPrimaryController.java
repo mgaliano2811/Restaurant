@@ -30,6 +30,12 @@ public class RestaurantPrimaryController {
     private TextField chefField;
     @FXML
     private TextField managerField;
+    @FXML
+    private TextField waiterPayField;
+    @FXML
+    private TextField chefPayField;
+    @FXML
+    private TextField managerPayField;
     
     private String restaurantName;
     private int numTables;
@@ -38,6 +44,9 @@ public class RestaurantPrimaryController {
     private int numWaiters;
     private int numChefs;
     private int numManagers;
+    private int waiterPay;
+    private int chefPay;
+    private int managerPay;
 
     @FXML
     void initialize() {
@@ -49,6 +58,9 @@ public class RestaurantPrimaryController {
         numWaiters = Integer.parseInt(waiterField.getText());
         numChefs = Integer.parseInt(chefField.getText());
         numManagers = Integer.parseInt(managerField.getText());
+        waiterPay = Integer.parseInt(waiterPayField.getText());
+        chefPay = Integer.parseInt(chefPayField.getText());
+        managerPay = Integer.parseInt(managerPayField.getText());
     }
 
     // Go into the main restaurant view
@@ -150,6 +162,44 @@ public class RestaurantPrimaryController {
         }
     }
 
+    // Next 3 functions are similar and relate to employee pay
+    @FXML
+    private void waiterPayChanged() {
+        int newNumber;
+        try {
+            newNumber = Integer.parseInt(waiterPayField.getText());
+            waiterPay = clamp(newNumber, 0, 77777);
+            waiterPayField.setText(Integer.toString(waiterPay));
+        } catch (Exception e) {
+            waiterPayField.setText(Integer.toString(waiterPay));
+        }
+    }
+
+    @FXML
+    private void chefPayChanged() {
+        int newNumber;
+        try {
+            newNumber = Integer.parseInt(chefPayField.getText());
+            chefPay = clamp(newNumber, 0, 77777);
+            chefPayField.setText(Integer.toString(chefPay));
+        } catch (Exception e) {
+            chefPayField.setText(Integer.toString(chefPay));
+        }
+    }
+
+    @FXML
+    private void managerPayChanged() {
+        int newNumber;
+        try {
+            newNumber = Integer.parseInt(managerPayField.getText());
+            managerPay = clamp(newNumber, 0, 77777);
+            managerPayField.setText(Integer.toString(managerPay));
+        } catch (Exception e) {
+            managerPayField.setText(Integer.toString(managerPay));
+        }
+    }
+
+
     // Check that the new minimum tables number is valid, and allow it to update if it is
     @FXML
     private void minTablesChanged() {
@@ -215,7 +265,9 @@ public class RestaurantPrimaryController {
             writer.write(numWaitersKeyValue() + "\n");
             writer.write(numChefsKeyValue() + "\n");
             writer.write(numManagersKeyValue() + "\n");
-
+            writer.write(waiterPayKeyValue() + "\n");
+            writer.write(chefPayKeyValue() + "\n");
+            writer.write(managerPayKeyValue() + "\n");
 
             writer.close();
         } catch (Exception e) {
@@ -305,5 +357,17 @@ public class RestaurantPrimaryController {
 
     private String numManagersKeyValue() {
         return "numManagers:" + numManagers;
+    }
+
+    private String waiterPayKeyValue() {
+        return "waiterPay:" + waiterPay;
+    }
+
+    private String chefPayKeyValue() {
+        return "chefPay:" + chefPay;
+    }
+
+    private String managerPayKeyValue() {
+        return "managerPay:" + managerPay;
     }
 }

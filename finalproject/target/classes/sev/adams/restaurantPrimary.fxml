@@ -51,15 +51,30 @@
         GridPane.columnIndex="0" GridPane.rowIndex = "9"/>
     <TextField fx:id="managerField" text="7" onAction="#numManagersChanged"
         GridPane.columnIndex="1" GridPane.rowIndex="9"/>
+
+    <Text text="Employee Salaries: (Consider that a salary is paid out every 7 time units, so this is kinda like per shift pay)" 
+        GridPane.columnIndex="0" GridPane.rowIndex = "10"/>
+    <Text text="        └>Waiters:"
+        GridPane.columnIndex="0" GridPane.rowIndex = "11"/>
+    <TextField fx:id="waiterPayField" text="77" onAction="#waiterPayChanged"
+        GridPane.columnIndex="1" GridPane.rowIndex="11"/>
+    <Text text="        └>Chefs:"
+        GridPane.columnIndex="0" GridPane.rowIndex = "12"/>
+    <TextField fx:id="chefPayField" text="77" onAction="#chefPayChanged"
+        GridPane.columnIndex="1" GridPane.rowIndex="12"/>
+    <Text text="        └>Managers:"
+        GridPane.columnIndex="0" GridPane.rowIndex = "13"/>
+    <TextField fx:id="managerPayField" text="77" onAction="#managerPayChanged"
+        GridPane.columnIndex="1" GridPane.rowIndex="13"/>
     
     
     <Text text="Customer Frequency (0-1):"
-        GridPane.columnIndex="0" GridPane.rowIndex = "10"/>
+        GridPane.columnIndex="0" GridPane.rowIndex = "14"/>
     <Slider fx:id="customerFrequencySlider" value="0.7" min="0" max="1" 
-        GridPane.columnIndex="1" GridPane.rowIndex = "10"/>
-    <Text text="1" GridPane.columnIndex="2" GridPane.rowIndex = "10"/>
+        GridPane.columnIndex="1" GridPane.rowIndex = "14"/>
+    <Text text="1" GridPane.columnIndex="2" GridPane.rowIndex = "14"/>
 
     <Button text="Start" onAction="#StartRestaurant"
-        GridPane.columnIndex="0" GridPane.rowIndex="11" GridPane.columnSpan="2"/>
+        GridPane.columnIndex="0" GridPane.rowIndex="16" GridPane.columnSpan="2"/>
 
 </GridPane>
