@@ -7,9 +7,11 @@ import restaurant.menu.*;
 public class Order {
 
     private final ArrayList<MenuItem> orderItems;
+    private final int orderNumber;
 
-    public Order() {
+    public Order(int orderNumber) {
         this.orderItems = new ArrayList<>();
+        this.orderNumber = orderNumber;
 
         Menu menu = new Menu();
 
@@ -35,4 +37,16 @@ public class Order {
         return total;
     }
 
+    public int getOrderNumber() { return orderNumber; }
+
+    @Override
+    public int hashCode() { return Integer.hashCode(orderNumber); }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;                // Same object
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Order other = (Order) obj;
+        return this.orderNumber == other.orderNumber;
+    }
 }
