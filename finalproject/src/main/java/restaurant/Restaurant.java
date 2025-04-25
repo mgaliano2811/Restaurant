@@ -274,6 +274,6 @@ public class Restaurant {
      */
     public void recordGroupBill(CustomerGroup group){
         double total = group.getBill();
-        database.recordBill(total);
+        db.recordBill(total);
     }
 }
