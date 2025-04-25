@@ -2,6 +2,7 @@ package sev.adams.view;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
+import sev.adams.controller.simulationMainController;
 
 // A cell that acts like a button, so we can react to it being pressed
 //  The info for an individual cell is two values seperated by a colon
@@ -9,10 +10,11 @@ import javafx.scene.control.ListCell;
 public class TablesListButtonCell extends ListCell<String> {
     // The button for this cell
     private Button cellButton;
-    
+    // The controller that we reference
+    private simulationMainController myController;
+
     // The Table information of the table this cell represents is stored in its item
-    //  It is formatted as a key value list in a string, like so:
-    //  "TableID:(tableID),Capacity:(capacity),CustomerGroup:(customerGroup)"
+    //  "(tableID):(capacity):(customerGroupID)"
     //  Though customerGroup may not be assigned
     public TablesListButtonCell() {
         cellButton = new Button(this.getText());
@@ -20,9 +22,17 @@ public class TablesListButtonCell extends ListCell<String> {
         cellButton.setOnAction(event -> 
             {
             String item = this.getItem();
-            System.out.println(item);
+            // Notify the controller that we requested the information for this table be shown in more detail.
+            //  We of course pass in our information, remember that the information is sorted like:
+            /// "(tableID):(capacity):(customerGroupID)"
+            myController.tableInformationRequested(this.getItem());
             }
         );
+    }
+
+    // Sets the reference for the controller for this
+    public void setController(simulationMainController controller) {
+        myController = controller;
     }
 
     // Get the tableID field from this cell's item data, it is the first field

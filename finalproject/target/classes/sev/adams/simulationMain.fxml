@@ -8,6 +8,7 @@
 <?import sev.adams.view.TablesListView?>
 <?import sev.adams.view.CustomersListView?>
 <?import sev.adams.view.EmployeeList?>
+<?import sev.adams.view.TableInfoListView?>
 
 <GridPane fx:controller="sev.adams.controller.simulationMainController"
     xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
@@ -29,12 +30,13 @@
 
     <Text text="Table Info:"
         GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-    <ListView 
-        GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+    <TableInfoListView fx:id="tableInfoList"
+        GridPane.columnIndex="2" GridPane.rowIndex="1">  
+    </TableInfoListView>
 
     <Button fx:id="timeButton" text="Progress Time" onAction="#doTimeButton"
         GridPane.columnIndex="3" GridPane.rowIndex="0"/>
-    <EmployeeList fx:id="EmployeeList"
+    <EmployeeList fx:id="employeeList"
         GridPane.columnIndex="3" GridPane.rowIndex="1"/>
 
 

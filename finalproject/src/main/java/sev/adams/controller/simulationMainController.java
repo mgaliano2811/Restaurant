@@ -8,6 +8,8 @@ import javafx.scene.control.ListView;
 import restaurant.Table;
 import sev.adams.model.simulationMainModel;
 import sev.adams.view.CustomersListView;
+import sev.adams.view.EmployeeList;
+import sev.adams.view.TableInfoListView;
 import sev.adams.view.TablesListView;
 
 public class simulationMainController {
@@ -23,6 +25,10 @@ public class simulationMainController {
     private TablesListView tablesList;
     @FXML
     private Button timeButton;
+    @FXML 
+    private EmployeeList employeeList;
+    @FXML
+    private TableInfoListView tableInfoList;
 
     public simulationMainController() {
         model = new simulationMainModel();
@@ -32,10 +38,13 @@ public class simulationMainController {
     @FXML
     void initialize() {
         // Register all of the simulationMainModel's observers, and set the myController field of our view
-        // If any of this garbage makes it into the final submission I will cry tears of pure sorrow
-        model.registerTableListObserver(tablesList);
+        tablesList.setController(this);
         customersList.setController(this);
+
+        model.registerTableListObserver(tablesList);
         model.registerCustomerListObserver(customersList);
+        model.registerEmployeeListObserver(employeeList);
+        model.registerTableInfoListObserver(tableInfoList);
 
         // After the observers are filled in, we can fully initialize the model
         model.fullInit();
@@ -69,5 +78,27 @@ public class simulationMainController {
     public void CustomerGroupRemovalRequsted(String customerGroupID, String assignedTableID) {
         // Let the model know that it needs to update its customerGroups
         model.removeCustomerGroup(customerGroupID, assignedTableID);
+    }
+
+    // A button in the table list requested that the information related to its table be shown in more detail
+    //  in the TableInfoListView panel.
+    // We are given a string that represents all the information we need to find the data the cell
+    //  that requested this represents, it is formatted as follows (customerGroup may not exist)
+    // "(tableID):(capacity):(customerGroupID)"
+    // @pre we have a tableID and capacity that is not null, this will not happen unless another error happens during
+    //  runtime. All fields in the string should be valid integers
+    public void tableInformationRequested(String itemInfo) {
+        // Split the item into its tableID and customerGroupID
+        int tableID = -1;
+        int customerID = -1; // This may or may not be given, negative one is nonsense enough
+
+        String[] dataFields = itemInfo.split(":");
+        tableID = Integer.parseInt(dataFields[0]); // We assume we have this
+        if (dataFields.length >= 3) {
+            customerID = Integer.parseInt(dataFields[2]);
+        }
+
+        // Pass this info to the model, which will get the needed tables and customerGroups and then pass it to TableInfoListView to render
+        model.renderTableInfo(tableID, customerID);
     }
 }

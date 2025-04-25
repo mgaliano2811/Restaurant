@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import java.util.ArrayList;
 import restaurant.Table;
+import sev.adams.controller.simulationMainController;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -11,6 +12,7 @@ import javafx.util.Callback;
 import restaurant.Table;
 
 public class TablesListView extends ListView<String>{
+    private simulationMainController myController;
 
     public TablesListView() {
         super();
@@ -19,12 +21,18 @@ public class TablesListView extends ListView<String>{
         this.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
             public ListCell<String> call(ListView<String> arg0) {
-                return new TablesListButtonCell();
+                TablesListButtonCell button = new TablesListButtonCell();
+                button.setController(myController);
+                return button;
             }
             
         });
     }
-
+    
+    // Sets the reference for the controller for this
+    public void setController(simulationMainController controller) {
+        myController = controller;
+    }
     // Adds a new table to the listView
     //  @pre given a table with a unique ID that is not already in this TablesListView
     public void addTable(Table newTable) {

@@ -14,6 +14,8 @@ import restaurant.Restaurant;
 import restaurant.Table;
 import sev.adams.RestaurantPrimaryController;
 import sev.adams.view.CustomersListView;
+import sev.adams.view.EmployeeList;
+import sev.adams.view.TableInfoListView;
 import sev.adams.view.TablesListView;
 
 // The model holds all of our actual data
@@ -24,6 +26,9 @@ public class simulationMainModel {
     // Observers
     private TablesListView tableListObserver;
     private CustomersListView customersListObserver;
+    private EmployeeList employeeListObserver;
+    private TableInfoListView tableInfoListObserver;
+
 
     /// Model data
     // How many time units have "passed"
@@ -165,7 +170,7 @@ public class simulationMainModel {
     private void addTables(Restaurant someRestaurant, int numTables, int minTableCap, int maxTableCap) {
         Random random = new Random();
         for (int i = 0; i < numTables; i++) {
-            Table newTable = someRestaurant.addTable(random.ints(minTableCap, maxTableCap).findFirst().getAsInt());
+            Table newTable = someRestaurant.addTable(random.ints(minTableCap, maxTableCap + 1).findFirst().getAsInt());
             notifyTableListObserverOfNewTable(newTable);
         }
     }
@@ -263,6 +268,21 @@ public class simulationMainModel {
         notifyCustomerViewObserverOfRemovedCustomerGroup(customerGroupID);
     }
 
+    // Procure the information that TableInfoListView needs in order to render the information about the table and the customers that
+    //  it is serving. Then pass that on to the TableInfoListView
+    //  @pre tableID is valid, customerID does not need to be valid, but if its not valid it must be -1
+    public void renderTableInfo(int tableID, int customerID) {
+        Table tableToRender = restaurant.getTable(tableID);
+        CustomerGroup customerGroupToRender = null;
+        if (customerID != -1) {
+            customerGroupToRender = this.getCustomerGroupFromID(Integer.toString(customerID)); // Wow I suck at this shit
+        }
+
+        // Let the TableInfoListView that it is time to render
+        //  And give it what it needs to render
+        notifyTableInfoListObserverRenderTable(tableToRender, customerGroupToRender);
+    }
+
     //////////////////////////////////////////////////////////////
     /// Observer Methods
     //////////////////////////////////////////////////////////////
@@ -275,6 +295,16 @@ public class simulationMainModel {
     // We only have one customer list observer, fill it in
     public void registerCustomerListObserver(CustomersListView customersListView) {
         customersListObserver = customersListView;
+    }
+
+    // We only have one employee list observer, fill it in
+    public void registerEmployeeListObserver(EmployeeList employeeList) {
+        employeeListObserver = employeeList;
+    }
+
+    // We only have one table info list observer, fill it in
+    public void registerTableInfoListObserver(TableInfoListView tableInfoList) {
+        tableInfoListObserver = tableInfoList;
     }
 
     // Completely clear and set the tableListObserver with a new set of tables
@@ -313,4 +343,12 @@ public class simulationMainModel {
         tableListObserver.tableUnassignCustomerGroup(table);
     }
     
+    // Tell the TableInfoListView to render a new table's info, and what it needs to render said info.
+    //   I know that this is an encapsulation error, but its intentional as the only way a CustomerGroup can be modified is 
+    //  adding a customer to it, and it would be inefficient to serialize the customerGroup just for that. Customer's are mainly
+    //  a model thing, and the view is related to the model, so I don't think that this is a big deal.
+    //  @pre tableToRender != null
+    private void notifyTableInfoListObserverRenderTable(Table tableToRender, CustomerGroup customerGroupToRender) {
+        tableInfoListObserver.renderTable(tableToRender, customerGroupToRender);
+    }
 }

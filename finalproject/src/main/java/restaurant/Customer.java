@@ -20,8 +20,8 @@ public class Customer {
         return id.toString();
     }
 
-    public ArrayList<MenuItem> getFoodWant() {
-        return foodWant.getOrderItems();
+    public Order getOrder() {
+        return foodWant; // Order is immutable so this is fine
     }
 
     public double getTotalPrice() {
