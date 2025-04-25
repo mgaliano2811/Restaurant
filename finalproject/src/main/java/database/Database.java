@@ -10,10 +10,13 @@ public class Database {
     private HashSet<Staff> employees;
     private Payroll payroll;
     private HashSet<Order> allOrders;
+    private ArrayList<Double> bills;
+
 
     public Database() {
         employees = new HashSet<Staff>();
         payroll = new Payroll();
+        bills = new ArrayList<Double>();
     }
 
     private int generateUniqueID() {
@@ -166,5 +169,25 @@ public class Database {
     public void paySalaries() {
         for (Staff s: employees)
             payroll.payEmployee(s.getEmloyeeID());
+    }
+    // 
+    /* records the bill in bills list.
+     * @pre: Don't pass a negative.
+     */
+    public void recordBill(double total){
+        bills.add(total);
+    }
+    
+    //gets the bills. Returns a copy 
+    public ArrayList<Double> getbills(){
+        return new ArrayList<>(bills);
+    }
+
+    public double getTotalBills(){
+        double total = 0.0;
+        for(double bill: bills){
+            total+=bill;
+        }
+        return total;
     }
 }
