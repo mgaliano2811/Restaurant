@@ -67,14 +67,8 @@ public class Restaurant {
     //  Returns the table that was chosen
     private Table actuallySeatPeople(int noOfPeople) {
         int count = noOfPeople;
-        while (true) {
-            if (count > biggestTable()) {
-                int group1 = ((Double)Math.floor(noOfPeople/2.0)).intValue(); // Take the floor of people/2
-                int group2 = ((Double)Math.ceil(noOfPeople/2.0)).intValue();  // Take the ceiling of people/2
-                actuallySeatPeople(group1);
-                actuallySeatPeople(group2);
-                return null;
-            }
+        
+        while (count <= biggestTable()) {
             List<Table> bucket = tablesByCapacity.get(count);
             if (bucket != null)
                 for (Table t: bucket) {
@@ -89,7 +83,12 @@ public class Restaurant {
                     }
                 }
             count++;
-        }   
+        }
+        
+        // Could not find a table, This is an error
+        System.err.println("[!] Error! Could not find a table for " + noOfPeople + " people!");
+        return null;
+
     }
 
     // People at the table left up so we free it

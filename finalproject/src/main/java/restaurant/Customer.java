@@ -13,7 +13,7 @@ public class Customer {
 
     public Customer() {
         id = UUID.randomUUID();
-        foodWant = new Order();
+        foodWant = new Order(1);
     }
 
     public String getId() {
