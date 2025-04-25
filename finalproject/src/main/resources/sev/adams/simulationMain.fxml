@@ -34,6 +34,9 @@
         GridPane.columnIndex="2" GridPane.rowIndex="1">  
     </TableInfoListView>
 
+    <Button fx:id="databaseButton" text="View Data" onAction="#doDatabaseButton"
+        GridPane.columnIndex="2" GridPane.rowIndex="0">
+
     <Button fx:id="timeButton" text="Progress Time" onAction="#doTimeButton"
         GridPane.columnIndex="3" GridPane.rowIndex="0"/>
     <EmployeeList fx:id="employeeList"

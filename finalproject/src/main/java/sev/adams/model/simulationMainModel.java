@@ -192,7 +192,13 @@ public class simulationMainModel {
     private void addTables(Restaurant someRestaurant, int numTables, int minTableCap, int maxTableCap) {
         Random random = new Random();
         for (int i = 0; i < numTables; i++) {
-            Table newTable = someRestaurant.addTable(random.ints(minTableCap, maxTableCap + 1).findFirst().getAsInt());
+            Table newTable;
+            if (i == 0) {
+                // Make sure at least one of the tables has maximum capacity
+                newTable = someRestaurant.addTable(maxTableCap);
+            } else {
+                newTable = someRestaurant.addTable(random.ints(minTableCap, maxTableCap + 1).findFirst().getAsInt());
+            }
             notifyTableListObserverOfNewTable(newTable);
         }
     }
