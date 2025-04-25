@@ -1,7 +1,6 @@
 package restaurant;
 
 import java.util.ArrayList;
-
 import restaurant.menu.*;
 
 public class Order {
@@ -15,9 +14,10 @@ public class Order {
 
         Menu menu = new Menu();
 
-        this.orderItems.add(menu.getMenuByType(ItemType.ENTREE).values().iterator().next());
-        this.orderItems.add(menu.getMenuByType(ItemType.DRINK).values().iterator().next());
-        this.orderItems.add(menu.getMenuByType(ItemType.DESSERT).values().iterator().next());
+        // Customer randomly picks something on the menu
+        this.orderItems.add(menu.getRandomMenuItemByType(ItemType.ENTREE));
+        this.orderItems.add(menu.getRandomMenuItemByType(ItemType.DRINK));
+        this.orderItems.add(menu.getRandomMenuItemByType(ItemType.DESSERT));
     }
 
     // Constructor for creating an order with specific items, not sure if we want this instead but it's here if we do

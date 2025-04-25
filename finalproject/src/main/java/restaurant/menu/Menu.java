@@ -1,7 +1,9 @@
 package restaurant.menu;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Random;
 
 public class Menu {
 
@@ -53,6 +55,18 @@ public class Menu {
             }
         }
         return filteredMenu;
+    }
+
+    // Get a random menuItem from the types, may return null in a theoretical case where this menu has 
+    //  none of that type
+    public MenuItem getRandomMenuItemByType(ItemType type) {
+        HashMap<String, MenuItem> filteredMenu = this.getMenuByType(type);
+        // Get all the possible values in this hashmap
+        ArrayList<MenuItem> possibleMenuItems = new ArrayList<MenuItem>(filteredMenu.values());
+        // Get a random menuItem from the values
+        Random random = new Random();
+        MenuItem chosenMenuItem = possibleMenuItems.get(random.nextInt(possibleMenuItems.size()));
+        return chosenMenuItem;
     }
     
     public void addMenuItem(String name, String itemString, double price, String description, int cookTime) {
