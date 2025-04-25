@@ -143,4 +143,28 @@ public class Database {
 
     public void addOrder(Order o) { allOrders.add(o); }
 
+    // Get all the salaries paid to all the existent employees
+    public double getAllSalariesPaid() {
+        double total = 0.0;
+        for (Staff s: employees) {
+            total += payroll.getAllEarnings(s.getEmloyeeID());
+        }
+        return total;
+    }
+
+    // Get the all time earnings for a specific employee
+    public Double getEarningsForEmployee(int employeeID) {
+        if (validateInputID(employeeID))
+            for (Staff s: employees) {
+                if (s.getEmloyeeID() == employeeID) 
+                    return payroll.getAllEarnings(s.getEmloyeeID());
+            }
+        return null;
+    }
+
+    // Pay salaries to all the employees
+    public void paySalaries() {
+        for (Staff s: employees)
+            payroll.payEmployee(s.getEmloyeeID());
+    }
 }

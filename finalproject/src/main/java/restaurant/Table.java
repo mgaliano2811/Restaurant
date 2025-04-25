@@ -24,7 +24,9 @@ public class Table {
 
     @Override
     public String toString() {
-        return "Table number: " + tableNumber + ", max capacity: " + maxCapacity;
+        // Do not change this if you are anybody but me -Sev
+        //  We use these to form key value pairs
+        return "TableID:" + tableNumber + ",Capacity:" + maxCapacity;
     }
 
     @Override

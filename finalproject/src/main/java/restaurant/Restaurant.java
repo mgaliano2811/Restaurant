@@ -37,42 +37,43 @@ public class Restaurant {
 
     public int getCurrRestaurantCapacity() { return currCapacity; } // Get people inside
 
-    // Returns a list of strings representing all of the tables
-    public ArrayList<String> tableStringList() {
-        ArrayList<String> returnList = new ArrayList<String>();
+    // Returns a list of all the tables in this restaurant
+    public ArrayList<Table> allTables() {
+        ArrayList<Table> returnList = new ArrayList<Table>();
         for (int key : tablesByCapacity.keySet()) {
             for (Table table : tablesByCapacity.get(key)) {
-                returnList.add(table.toString());
+                returnList.add(table);
             }
         }
         return returnList;
     }
 
     // Will add prechecks depending on implementation of max capacity
-    public void seatPeople(int people) {
+    // Returns the table that was chosen to seat people at, or null if we could not find a table
+    public Table seatPeople(int people) {
         int possibleSeats = 0;
         for (Table t: freeTables)   // For loop to get all available seats 
             if (!occupied(t)) possibleSeats += t.getMaxCapacity();
         if (possibleSeats < people) {
             System.err.println("There is not enough capacity to sit " + people + " people.");
-            return;         // Return cause we can't do anything
+            return null;         // Return cause we can't do anything
         }
-        actuallySeatPeople(people);
+        return actuallySeatPeople(people);
     }
 
     public boolean occupied (Table t) { return occupiedTables.contains(t); }
 
     // Loop to seat people in the seat (shit name but it is what it is)
-    private void actuallySeatPeople(int noOfPeople) {
-        boolean done = false;
+    //  Returns the table that was chosen
+    private Table actuallySeatPeople(int noOfPeople) {
         int count = noOfPeople;
-        while (!done) {
+        while (true) {
             if (count > biggestTable()) {
-                int group1 = ((Double)Math.floor(noOfPeople/2)).intValue(); // Take the floor of people/2
-                int group2 = ((Double)Math.ceil(noOfPeople/2)).intValue();  // Take the ceiling of people/2
+                int group1 = ((Double)Math.floor(noOfPeople/2.0)).intValue(); // Take the floor of people/2
+                int group2 = ((Double)Math.ceil(noOfPeople/2.0)).intValue();  // Take the ceiling of people/2
                 actuallySeatPeople(group1);
                 actuallySeatPeople(group2);
-                return;
+                return null;
             }
             List<Table> bucket = tablesByCapacity.get(count);
             if (bucket != null)
@@ -84,7 +85,7 @@ public class Restaurant {
                         occupiedTables.add(occTable);   // Add to occupied tables
                         assignWaiter(occTable);         // Assign waiter to table
                         currCapacity += noOfPeople;     // Update current capacity
-                        done = true;
+                        return t;
                     }
                 }
             count++;
@@ -119,6 +120,16 @@ public class Restaurant {
         System.err.println("There is no table by that ID");
     }
 
+
+    // THIS IS AN UNUSED FUNCTION, COMMENTING IT SO COVERAGE IS NOT AFFECTED
+    // Helper to count total number of tables
+    // private int numberOfTables() {
+    //     int count = 0;
+    //     for (Table t: freeTables) count++;
+    //     for (Table t: occupiedTables) count++;
+    //     return count;
+    // }
+
     // Helper to get the biggest Table in the restaurant
     private int biggestTable() {
         int max = 0;
@@ -128,17 +139,18 @@ public class Restaurant {
         return max;
     }
 
+    // COMMENTED OUT FOR COVERAGE REASONSR COVERAGE REASONS
     // Debug funciton
-    public void debugPrint() {
-        for (int i : tablesByCapacity.keySet()) {
-            System.out.print("Tables with " + i + " Capacity: ");
-            for (Table t : tablesByCapacity.get(i)) {
-                System.out.println(t.toString());
-                System.out.print("|");
-            }
-            System.out.print("\n");
-        }
-    }
+    // public void debugPrint() {
+    //     for (int i : tablesByCapacity.keySet()) {
+    //         System.out.print("Tables with " + i + " Capacity: ");
+    //         for (Table t : tablesByCapacity.get(i)) {
+    //             System.out.println(t.toString());
+    //             System.out.print("|");
+    //         }
+    //         System.out.print("\n");
+    //     }
+    // }
 
     /* Design by contract:
      * @pre: Don't pass in a negative
@@ -168,7 +180,7 @@ public class Restaurant {
     /* Design by contract:
      * @pre: Don't pass in a negative
      */
-    public void addTable(int capacity) {
+    public Table addTable(int capacity) {
         Table t = new Table (assignTableNumber(), capacity);
         freeTables.add(t);
         if (tablesByCapacity.keySet().contains(capacity)) {
@@ -179,6 +191,8 @@ public class Restaurant {
             ArrayList<Table> listToAdd = tablesByCapacity.get(capacity);
             listToAdd.add(t);
         }
+
+        return t; // Tables are immutable baby, I can do what I want baby
     }
 
     // Helper to get the minimum table number available 
