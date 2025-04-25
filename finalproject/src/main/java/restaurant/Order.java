@@ -20,6 +20,12 @@ public class Order {
         this.orderItems.add(menu.getRandomMenuItemByType(ItemType.DESSERT));
     }
 
+    // Copy constructor but with a new orderNumber
+    public Order(Order order, int orderNumber) {
+        this.orderItems = order.getOrderItems();
+        this.orderNumber = orderNumber;
+    }
+
     // Constructor for creating an order with specific items, not sure if we want this instead but it's here if we do
     // public Order(ArrayList<MenuItem> orderItems) {
     //     this.orderItems = new ArrayList<>(orderItems);

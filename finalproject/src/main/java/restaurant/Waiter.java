@@ -22,5 +22,5 @@ public class Waiter extends Staff {
     }
 
     @Override
-    public String toString() { return super.toString() + "(Waiter)"; }
+    public String toString() { return super.toString() + " (Waiter)"; }
 } 

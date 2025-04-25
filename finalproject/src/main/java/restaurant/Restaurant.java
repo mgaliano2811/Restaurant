@@ -256,6 +256,13 @@ public class Restaurant {
         activeOrders.add(newOrder);
     }
 
+    // This one just takes an already created order
+    public void makeOrder(Order order) {
+        Integer newNumber = db.getOrders().size() + 1;
+        Order newOrder = new Order(order, newNumber);
+        activeOrders.add(newOrder);
+    }
+
     /* Do this when we have received payment. Here we add the order to the 
      * database, since we know now it cannot change.
      * @pre: Don't pass in a null
@@ -266,5 +273,18 @@ public class Restaurant {
             db.addOrder(o);
         } else
             System.err.println("Order doesn't exist or has already been closed");
+    }
+
+    // Get all of the employees in the restaurant in string format
+    //  this is mostly just for visual stuff so the user can see the employees
+    public ArrayList<String> getAllEmployeeStrings() {
+        ArrayList<Staff> employees = db.getEmployees();
+        ArrayList<String> employeeStrings = new ArrayList<String>();
+
+        for (Staff employee : employees) {
+            employeeStrings.add(employee.toString());
+        }
+
+        return employeeStrings;
     }
 }

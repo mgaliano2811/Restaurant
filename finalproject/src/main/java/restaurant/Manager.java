@@ -9,5 +9,5 @@ public class Manager extends Staff{
     public StaffType getEmployeeType() { return StaffType.MANAGER; }
 
     @Override
-    public String toString() { return super.toString() + "(Manager)";}
+    public String toString() { return super.toString() + " (Manager)";}
 }   

@@ -23,7 +23,7 @@
     <CheckBox fx:id="loadCheckBox"
         GridPane.columnIndex="1" GridPane.rowIndex = "2"/>
     
-    <Text text="Number of Tables:"
+    <Text text="Number of Tables: (Note that minimum table capacity must be less than or equal to maximum table capacity)"
         GridPane.columnIndex="0" GridPane.rowIndex="3"/>
     <TextField fx:id="tableField" text="7" onAction="#numTablesChanged"
         GridPane.columnIndex="1" GridPane.rowIndex="3"/>
@@ -36,15 +36,30 @@
         GridPane.columnIndex="0" GridPane.rowIndex = "5"/>
     <TextField fx:id="maximumTableField" text="7" onAction="#maxTablesChanged"
         GridPane.columnIndex="1" GridPane.rowIndex = "5"/>
+
+    <Text text="Employees Hired:" 
+        GridPane.columnIndex="0" GridPane.rowIndex = "6"/>
+    <Text text="        └>Waiters:"
+        GridPane.columnIndex="0" GridPane.rowIndex = "7"/>
+    <TextField fx:id="waiterField" text="7" onAction="#numWaitersChanged"
+        GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+    <Text text="        └>Chefs:"
+        GridPane.columnIndex="0" GridPane.rowIndex = "8"/>
+    <TextField fx:id="chefField" text="7" onAction="#numChefsChanged"
+        GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+    <Text text="        └>Managers:"
+        GridPane.columnIndex="0" GridPane.rowIndex = "9"/>
+    <TextField fx:id="managerField" text="7" onAction="#numManagersChanged"
+        GridPane.columnIndex="1" GridPane.rowIndex="9"/>
     
     
     <Text text="Customer Frequency (0-1):"
-        GridPane.columnIndex="0" GridPane.rowIndex = "6"/>
+        GridPane.columnIndex="0" GridPane.rowIndex = "10"/>
     <Slider fx:id="customerFrequencySlider" value="0.7" min="0" max="1" 
-        GridPane.columnIndex="1" GridPane.rowIndex = "6"/>
-    <Text text="1" GridPane.columnIndex="2" GridPane.rowIndex = "6"/>
+        GridPane.columnIndex="1" GridPane.rowIndex = "10"/>
+    <Text text="1" GridPane.columnIndex="2" GridPane.rowIndex = "10"/>
 
     <Button text="Start" onAction="#StartRestaurant"
-        GridPane.columnIndex="0" GridPane.rowIndex="7" GridPane.columnSpan="2"/>
+        GridPane.columnIndex="0" GridPane.rowIndex="11" GridPane.columnSpan="2"/>
 
 </GridPane>

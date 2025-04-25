@@ -11,6 +11,8 @@ import java.util.stream.IntStream;
 import restaurant.Customer;
 import restaurant.CustomerGroup;
 import restaurant.Restaurant;
+import restaurant.Staff;
+import restaurant.StaffType;
 import restaurant.Table;
 import sev.adams.RestaurantPrimaryController;
 import sev.adams.view.CustomersListView;
@@ -55,6 +57,7 @@ public class simulationMainModel {
 
         // Create the restaurant
         restaurant = createRestaurantFromSaveFile(restaurantSaveFilePath);
+        notifyEmployeeListAllEmployees();
         System.out.println("Created Restaurant: " + restaurantName);
     }
 
@@ -113,6 +116,9 @@ public class simulationMainModel {
             int minTableCap = 1;
             int maxTableCap = 7;
             double customerFrequency = 0.7;
+            int numWaiters = 7;
+            int numChefs = 7;
+            int numManagers = 7;
 
             // Read the save file and get all the values that we will need
             File restaurantSaveFile = new File(restaurantSaveFilePath);
@@ -135,6 +141,12 @@ public class simulationMainModel {
                     maxTableCap = this.maxTableCap; //:trollface:
                 } else if (key.equals("customerFrequency")) {
                     customerFrequency = Double.parseDouble(value);
+                } else if (key.equals("numWaiters")) {
+                    numWaiters = Integer.parseInt(value);
+                } else if (key.equals("numChefs")) {
+                    numChefs = Integer.parseInt(value);
+                } else if (key.equals("numManagers")) {
+                    numManagers = Integer.parseInt(value);
                 }
 
                 thisLine = reader.readLine();
@@ -146,6 +158,16 @@ public class simulationMainModel {
             newRestaurant = new Restaurant();
             this.addTables(newRestaurant, numTables, minTableCap, maxTableCap);
             this.customerFrequency = customerFrequency;
+
+            for (int i = 0; i < numWaiters; i++) {
+                newRestaurant.addEmployee(Staff.randomFirstName(), Staff.randomLastName(), StaffType.WAITER, 77);
+            }
+            for (int i = 0; i < numChefs; i++) {
+                newRestaurant.addEmployee(Staff.randomFirstName(), Staff.randomLastName(), StaffType.CHEF, 77);
+            }
+            for (int i = 0; i < numManagers; i++) {
+                newRestaurant.addEmployee(Staff.randomFirstName(), Staff.randomLastName(), StaffType.MANAGER, 77);
+            }
 
         } catch (Exception e) {
             // Another situation where I feel we have no recourse, and its best to just crash
@@ -350,5 +372,10 @@ public class simulationMainModel {
     //  @pre tableToRender != null
     private void notifyTableInfoListObserverRenderTable(Table tableToRender, CustomerGroup customerGroupToRender) {
         tableInfoListObserver.renderTable(tableToRender, customerGroupToRender);
+    }
+
+    // Give the EmployeeListView a new list of all the employee strings it needs to display
+    private void notifyEmployeeListAllEmployees() {
+        employeeListObserver.renderEmployees(restaurant.getAllEmployeeStrings());
     }
 }
