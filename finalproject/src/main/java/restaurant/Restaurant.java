@@ -5,6 +5,8 @@ import java.lang.Math;
 import java.util.HashMap;
 import java.util.List;
 
+import database.Database;
+
 public class Restaurant {
     private final String restaurantName; // Final cause why not fuck it
     private ArrayList<Table> freeTables;        // Use ArrayList because number of tables is limited
@@ -15,6 +17,8 @@ public class Restaurant {
 
     private int maxCapacity;
     private int currCapacity;
+
+    private Database database;
     
     public Restaurant() {
         freeTables = new ArrayList<Table>();
@@ -239,4 +243,12 @@ public class Restaurant {
      */
     public void addWaiter(Waiter w) { waitersToTable.put(w, new ArrayList<Table>()); }
 
+    /* records the total bill in the database.
+     * Design by contract:
+     * @pre: Don't pass a null group
+     */
+    public void recordGroupBill(CustomerGroup group){
+        double total = group.getBill();
+        database.recordBill(total);
+    }
 }
