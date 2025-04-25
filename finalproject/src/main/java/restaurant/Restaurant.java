@@ -268,4 +268,12 @@ public class Restaurant {
         } else
             System.err.println("Order doesn't exist or has already been closed");
     }
+    /* records the total bill in the database.
+     * Design by contract:
+     * @pre: Don't pass a null group
+     */
+    public void recordGroupBill(CustomerGroup group){
+        double total = group.getBill();
+        database.recordBill(total);
+    }
 }
