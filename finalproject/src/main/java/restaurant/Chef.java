@@ -9,5 +9,5 @@ public class Chef extends Staff{
     public StaffType getEmployeeType() { return StaffType.CHEF; }
 
     @Override
-    public String toString() { return super.toString() + "(Chef)";}
+    public String toString() { return super.toString() + " (Chef)";}
 }

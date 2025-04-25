@@ -46,6 +46,17 @@ public class CustomerGroup implements Iterable<Customer>{
         return getBill() * (tipPercentage / 100.0);
     }
 
+    // Get all the orders from the customers, orders are immutable so this shouldn't be a problem
+    public ArrayList<Order> getOrders() {
+        ArrayList<Order> orderList = new ArrayList<Order>();
+
+        for (Customer customer : this.customers) {
+            orderList.add(customer.getOrder());
+        }
+
+        return orderList;
+    }
+
     @Override
     public Iterator<Customer> iterator() {
         return customers.iterator();

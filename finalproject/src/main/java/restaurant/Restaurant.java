@@ -28,6 +28,7 @@ public class Restaurant {
         currCapacity = 0;
         tablesByCapacity = new HashMap<Integer, ArrayList<Table>>();
         waitersToTable = new HashMap<Waiter, ArrayList<Table>>();
+        activeOrders = new ArrayList<Order>();
         db = new Database();
     }
 
@@ -67,14 +68,8 @@ public class Restaurant {
     //  Returns the table that was chosen
     private Table actuallySeatPeople(int noOfPeople) {
         int count = noOfPeople;
-        while (true) {
-            if (count > biggestTable()) {
-                int group1 = ((Double)Math.floor(noOfPeople/2.0)).intValue(); // Take the floor of people/2
-                int group2 = ((Double)Math.ceil(noOfPeople/2.0)).intValue();  // Take the ceiling of people/2
-                actuallySeatPeople(group1);
-                actuallySeatPeople(group2);
-                return null;
-            }
+        
+        while (count <= biggestTable()) {
             List<Table> bucket = tablesByCapacity.get(count);
             if (bucket != null)
                 for (Table t: bucket) {
@@ -89,7 +84,12 @@ public class Restaurant {
                     }
                 }
             count++;
-        }   
+        }
+        
+        // Could not find a table, This is an error
+        System.err.println("[!] Error! Could not find a table for " + noOfPeople + " people!");
+        return null;
+
     }
 
     // People at the table left up so we free it
@@ -257,6 +257,11 @@ public class Restaurant {
         activeOrders.add(newOrder);
     }
 
+    // This one just takes an already created order
+    public void makeOrder(Order order) {
+        activeOrders.add(order);
+    }
+
     /* Do this when we have received payment. Here we add the order to the 
      * database, since we know now it cannot change.
      * @pre: Don't pass in a null
@@ -267,5 +272,34 @@ public class Restaurant {
             db.addOrder(o);
         } else
             System.err.println("Order doesn't exist or has already been closed");
+    }
+
+    // Get all of the employees in the restaurant in string format
+    //  this is mostly just for visual stuff so the user can see the employees
+    public ArrayList<String> getAllEmployeeStrings() {
+        ArrayList<Staff> employees = db.getEmployees();
+        ArrayList<String> employeeStrings = new ArrayList<String>();
+
+        for (Staff employee : employees) {
+            employeeStrings.add(employee.toString());
+        }
+
+        return employeeStrings;
+    }
+
+    // Sorry matteo, im bypassing your way of doing tips unless we have more time
+    //  register a general tip that is not assigned to any one waiter
+    public void registerGeneralTip(double tipAmount) {
+        db.registerGeneralTip(tipAmount);
+    }
+
+    // Get all of the database information in string format
+    public ArrayList<String> getDatabaseInfoInString() {
+        return db.getStringData();
+    }
+
+    // Pay the salaries of all employees
+    public void payAllEmployees() {
+        db.paySalaries();
     }
 }

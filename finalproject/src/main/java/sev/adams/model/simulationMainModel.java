@@ -10,10 +10,15 @@ import java.util.stream.IntStream;
 
 import restaurant.Customer;
 import restaurant.CustomerGroup;
+import restaurant.Order;
 import restaurant.Restaurant;
+import restaurant.Staff;
+import restaurant.StaffType;
 import restaurant.Table;
 import sev.adams.RestaurantPrimaryController;
 import sev.adams.view.CustomersListView;
+import sev.adams.view.EmployeeList;
+import sev.adams.view.TableInfoListView;
 import sev.adams.view.TablesListView;
 
 // The model holds all of our actual data
@@ -24,6 +29,9 @@ public class simulationMainModel {
     // Observers
     private TablesListView tableListObserver;
     private CustomersListView customersListObserver;
+    private EmployeeList employeeListObserver;
+    private TableInfoListView tableInfoListObserver;
+
 
     /// Model data
     // How many time units have "passed"
@@ -50,6 +58,7 @@ public class simulationMainModel {
 
         // Create the restaurant
         restaurant = createRestaurantFromSaveFile(restaurantSaveFilePath);
+        notifyEmployeeListAllEmployees();
         System.out.println("Created Restaurant: " + restaurantName);
     }
 
@@ -108,6 +117,12 @@ public class simulationMainModel {
             int minTableCap = 1;
             int maxTableCap = 7;
             double customerFrequency = 0.7;
+            int numWaiters = 7;
+            int numChefs = 7;
+            int numManagers = 7;
+            int waiterPay = 77;
+            int chefPay = 77;
+            int managerPay = 77;
 
             // Read the save file and get all the values that we will need
             File restaurantSaveFile = new File(restaurantSaveFilePath);
@@ -130,6 +145,18 @@ public class simulationMainModel {
                     maxTableCap = this.maxTableCap; //:trollface:
                 } else if (key.equals("customerFrequency")) {
                     customerFrequency = Double.parseDouble(value);
+                } else if (key.equals("numWaiters")) {
+                    numWaiters = Integer.parseInt(value);
+                } else if (key.equals("numChefs")) {
+                    numChefs = Integer.parseInt(value);
+                } else if (key.equals("numManagers")) {
+                    numManagers = Integer.parseInt(value);
+                } else if (key.equals("waiterPay")) {
+                    waiterPay = Integer.parseInt(value);
+                } else if (key.equals("chefPay")) {
+                    chefPay = Integer.parseInt(value);
+                } else if (key.equals("managerPay")) {
+                    managerPay = Integer.parseInt(value);
                 }
 
                 thisLine = reader.readLine();
@@ -141,6 +168,16 @@ public class simulationMainModel {
             newRestaurant = new Restaurant();
             this.addTables(newRestaurant, numTables, minTableCap, maxTableCap);
             this.customerFrequency = customerFrequency;
+
+            for (int i = 0; i < numWaiters; i++) {
+                newRestaurant.addEmployee(Staff.randomFirstName(), Staff.randomLastName(), StaffType.WAITER, waiterPay);
+            }
+            for (int i = 0; i < numChefs; i++) {
+                newRestaurant.addEmployee(Staff.randomFirstName(), Staff.randomLastName(), StaffType.CHEF, chefPay);
+            }
+            for (int i = 0; i < numManagers; i++) {
+                newRestaurant.addEmployee(Staff.randomFirstName(), Staff.randomLastName(), StaffType.MANAGER, managerPay);
+            }
 
         } catch (Exception e) {
             // Another situation where I feel we have no recourse, and its best to just crash
@@ -165,7 +202,13 @@ public class simulationMainModel {
     private void addTables(Restaurant someRestaurant, int numTables, int minTableCap, int maxTableCap) {
         Random random = new Random();
         for (int i = 0; i < numTables; i++) {
-            Table newTable = someRestaurant.addTable(random.ints(minTableCap, maxTableCap).findFirst().getAsInt());
+            Table newTable;
+            if (i == 0) {
+                // Make sure at least one of the tables has maximum capacity
+                newTable = someRestaurant.addTable(maxTableCap);
+            } else {
+                newTable = someRestaurant.addTable(random.ints(minTableCap, maxTableCap + 1).findFirst().getAsInt());
+            }
             notifyTableListObserverOfNewTable(newTable);
         }
     }
@@ -177,6 +220,11 @@ public class simulationMainModel {
         // See if we want to add a new customerGroup
         if (Math.random() < customerFrequency) {
             this.newCustomerGroup();
+        }
+
+        // Every 7 time units all employees get paid out their salary
+        if (currentTime % 7 == 0) {
+            restaurant.payAllEmployees();
         }
     }
     
@@ -231,6 +279,11 @@ public class simulationMainModel {
             return;
         }
 
+        // Set up the orders with the restaurants database
+        for (Order order : relevantCustomerGroup.getOrders()) {
+            restaurant.makeOrder(order);
+        }
+
         // Now the information is sorted in the model, we need to let observers know so we can update info on the view
         notifyTableViewObserverOfAssignedCustomerGroup(assignedTable, relevantCustomerGroup.getID());
         notifyCustomerViewObserverOfAssignedCustomerGroup(assignedTable, relevantCustomerGroup.getID());
@@ -238,13 +291,22 @@ public class simulationMainModel {
     }
 
     // Remove the customerGroup with customerGroupID from our restaurant representation
+    //  Doing this also closes the order with the restaurant
     // @pre There is a customerGroup with customerGroupID in our representation
     // assignedTableID is allowed to be null, that just means this group didn't have an assignedTableID
     public void removeCustomerGroup(String customerGroupID, String assignedTableID) {
         // First remove the customerGroup from our representation
         for (CustomerGroup thisGroup : customerGroups) {
-            if (thisGroup.getID() == customerGroupID) {
+            if (thisGroup.getID().equals(customerGroupID)) {
                 // Found the customerGroup that we want to remove
+                // Close all the customer's orders
+                for (Order order : thisGroup.getOrders()) {
+                    restaurant.closeOrder(order);
+                }
+                // Register the tips given
+                // TODO: If we have time make this consider a specific waiter to give the tips to
+                restaurant.registerGeneralTip(thisGroup.getTip());
+
                 customerGroups.remove(thisGroup);
                 break;
             }
@@ -263,6 +325,28 @@ public class simulationMainModel {
         notifyCustomerViewObserverOfRemovedCustomerGroup(customerGroupID);
     }
 
+    // Procure the information that TableInfoListView needs in order to render the information about the table and the customers that
+    //  it is serving. Then pass that on to the TableInfoListView
+    //  @pre tableID is valid, customerID does not need to be valid, but if its not valid it must be -1
+    public void renderTableInfo(int tableID, int customerID) {
+        Table tableToRender = restaurant.getTable(tableID);
+        CustomerGroup customerGroupToRender = null;
+        if (customerID != -1) {
+            customerGroupToRender = this.getCustomerGroupFromID(Integer.toString(customerID)); // Wow I suck at this shit
+        }
+
+        // Let the TableInfoListView that it is time to render
+        //  And give it what it needs to render
+        notifyTableInfoListObserverRenderTable(tableToRender, customerGroupToRender);
+    }
+
+    // We hijack the TableInfoListView to show database info, simply telling the TableInfoListView what to render from the database
+    public void renderDatabase() {
+        ArrayList<String> dataBaseData = restaurant.getDatabaseInfoInString();
+
+        notifyTableInfoListViewRenderDatabase(dataBaseData);
+    }
+
     //////////////////////////////////////////////////////////////
     /// Observer Methods
     //////////////////////////////////////////////////////////////
@@ -275,6 +359,16 @@ public class simulationMainModel {
     // We only have one customer list observer, fill it in
     public void registerCustomerListObserver(CustomersListView customersListView) {
         customersListObserver = customersListView;
+    }
+
+    // We only have one employee list observer, fill it in
+    public void registerEmployeeListObserver(EmployeeList employeeList) {
+        employeeListObserver = employeeList;
+    }
+
+    // We only have one table info list observer, fill it in
+    public void registerTableInfoListObserver(TableInfoListView tableInfoList) {
+        tableInfoListObserver = tableInfoList;
     }
 
     // Completely clear and set the tableListObserver with a new set of tables
@@ -313,4 +407,21 @@ public class simulationMainModel {
         tableListObserver.tableUnassignCustomerGroup(table);
     }
     
+    // Tell the TableInfoListView to render a new table's info, and what it needs to render said info.
+    //   I know that this is an encapsulation error, but its intentional as the only way a CustomerGroup can be modified is 
+    //  adding a customer to it, and it would be inefficient to serialize the customerGroup just for that. Customer's are mainly
+    //  a model thing, and the view is related to the model, so I don't think that this is a big deal.
+    //  @pre tableToRender != null
+    private void notifyTableInfoListObserverRenderTable(Table tableToRender, CustomerGroup customerGroupToRender) {
+        tableInfoListObserver.renderTable(tableToRender, customerGroupToRender);
+    }
+
+    // Give the EmployeeListView a new list of all the employee strings it needs to display
+    private void notifyEmployeeListAllEmployees() {
+        employeeListObserver.renderEmployees(restaurant.getAllEmployeeStrings());
+    }
+
+    private void notifyTableInfoListViewRenderDatabase(ArrayList<String> dataBaseData) {
+        tableInfoListObserver.renderDatabase(dataBaseData);
+    }
 }

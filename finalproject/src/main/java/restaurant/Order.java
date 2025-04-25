@@ -1,7 +1,6 @@
 package restaurant;
 
 import java.util.ArrayList;
-
 import restaurant.menu.*;
 
 public class Order {
@@ -15,9 +14,16 @@ public class Order {
 
         Menu menu = new Menu();
 
-        this.orderItems.add(menu.getMenuByType(ItemType.ENTREE).values().iterator().next());
-        this.orderItems.add(menu.getMenuByType(ItemType.DRINK).values().iterator().next());
-        this.orderItems.add(menu.getMenuByType(ItemType.DESSERT).values().iterator().next());
+        // Customer randomly picks something on the menu
+        this.orderItems.add(menu.getRandomMenuItemByType(ItemType.ENTREE));
+        this.orderItems.add(menu.getRandomMenuItemByType(ItemType.DRINK));
+        this.orderItems.add(menu.getRandomMenuItemByType(ItemType.DESSERT));
+    }
+
+    // Copy constructor but with a new orderNumber
+    public Order(Order order, int orderNumber) {
+        this.orderItems = order.getOrderItems();
+        this.orderNumber = orderNumber;
     }
 
     // Constructor for creating an order with specific items, not sure if we want this instead but it's here if we do
@@ -38,6 +44,17 @@ public class Order {
     }
 
     public int getOrderNumber() { return orderNumber; }
+
+    // Return a stringified version of everything in this order
+    @Override
+    public String toString() {
+        String returnString = "";
+        for (MenuItem item : orderItems) {
+            returnString += item.toString() + "\n";
+        }
+
+        return returnString;
+    }
 
     @Override
     public int hashCode() { return Integer.hashCode(orderNumber); }

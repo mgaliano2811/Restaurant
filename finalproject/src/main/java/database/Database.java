@@ -9,11 +9,12 @@ public class Database {
     // HashSet to look up things in constant time (I want pretty points)
     private HashSet<Staff> employees;
     private Payroll payroll;
-    private HashSet<Order> allOrders;
+    private ArrayList<Order> allOrders;
 
     public Database() {
         employees = new HashSet<Staff>();
         payroll = new Payroll();
+        allOrders = new ArrayList<Order>();
     }
 
     private int generateUniqueID() {
@@ -139,7 +140,7 @@ public class Database {
         return waiters;
     }
 
-    public HashSet<Order> getOrders() { return new HashSet<Order>(allOrders); }
+    public ArrayList<Order> getOrders() { return new ArrayList<Order>(allOrders); }
 
     public void addOrder(Order o) { allOrders.add(o); }
 
@@ -166,5 +167,33 @@ public class Database {
     public void paySalaries() {
         for (Staff s: employees)
             payroll.payEmployee(s.getEmloyeeID());
+    }
+
+    // Register a tip that does not belong to any one waiter
+    public void registerGeneralTip(double tipAmount) {
+        payroll.registerGeneralTip(tipAmount);
+    }
+
+    // Get the total amount of money made from orders
+    public double totalOrdersMoney() {
+        double totalCash = 0;
+
+        for (Order order : allOrders) {
+            totalCash += order.getTotalPrice();
+        }
+
+        return totalCash;
+    }
+
+    // Get various datapoints from the database in string format
+    public ArrayList<String> getStringData() {
+        ArrayList<String> dataPoints = new ArrayList<String>();
+
+        dataPoints.add("Total Orders Taken: " + allOrders.size() + " Orders");
+        dataPoints.add("Total Money Made from Orders: $" + String.format("%.2f", totalOrdersMoney()));
+        dataPoints.add("Total Money Made from Tips: $" + String.format("%.2f", payroll.totalTipsEarned()));
+        dataPoints.add("Total Payroll Expense: $" + payroll.totalPayrollExpense());
+
+        return dataPoints;
     }
 }

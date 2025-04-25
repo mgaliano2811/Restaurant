@@ -13,15 +13,15 @@ public class Customer {
 
     public Customer() {
         id = UUID.randomUUID();
-        foodWant = new Order();
+        foodWant = new Order(1);
     }
 
     public String getId() {
         return id.toString();
     }
 
-    public ArrayList<MenuItem> getFoodWant() {
-        return foodWant.getOrderItems();
+    public Order getOrder() {
+        return foodWant; // Order is immutable so this is fine
     }
 
     public double getTotalPrice() {
