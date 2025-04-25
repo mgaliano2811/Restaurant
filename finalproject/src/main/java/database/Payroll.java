@@ -14,9 +14,12 @@ import restaurant.*;
 
     // Map employee ID to payroll record
     private HashMap<Integer, PayrollRecord> payrollRecords;
+    // Total unspecified tips that the restaurant has recieved
+    private double totalUnspecifiedTipAmount;
 
     public Payroll() {
         payrollRecords = new HashMap<>();   // Initialize hashmap
+        totalUnspecifiedTipAmount = 0;
     }
 
     // Register a payment to an employee
@@ -54,6 +57,11 @@ import restaurant.*;
         record.addTip(tipAmount);
     }
 
+    // Records a tip that does not belong to any single employee, and is instead tallied up seperately
+    public void registerGeneralTip(double tipAmount) {
+        totalUnspecifiedTipAmount += tipAmount;
+    }
+
     public double getTip(int ID) { return payrollRecords.get(ID).getTips(); }
 
     public double getTotalCompensation(int ID) { 
@@ -62,13 +70,23 @@ import restaurant.*;
 
     public String getPayrollRecord(int ID) { return payrollRecords.get(ID).toString(); }
     
-    // Calculates the total fixed payroll expense adding base salaries for employees
+    // Calculates the total amount paid to all the employees during this run
     public double totalPayrollExpense() {
         double total = 0;
         for (PayrollRecord record : payrollRecords.values()) {
-            total += record.getSalary();
+            total += record.getAllTimeEarnings();
         }
         return total;
+    }
+
+    // Calculates the total amount of TIPS paid to all employees, including the unspecified tips given
+    public double totalTipsEarned() {
+        double totalTips = totalUnspecifiedTipAmount;
+        for (PayrollRecord record : payrollRecords.values()) {
+            totalTips += record.getTips();
+        }
+
+        return totalTips;
     }
     
     /**
@@ -111,7 +129,7 @@ import restaurant.*;
         @Override
         public String toString() {
             return "PayrollRecord [Employee: " + employee.toString() + 
-                   ", Salary: " + salary + ", Tips: " + tips + "]";
+                ", Salary: " + salary + ", Tips: " + tips + "]";
         }
     }
 

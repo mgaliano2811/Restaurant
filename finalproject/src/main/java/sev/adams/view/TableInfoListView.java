@@ -42,4 +42,18 @@ public class TableInfoListView extends ListView<String>{
         
     }
 
+    // Use this space to view the database data
+    //  database Data will just be an arraylist of strings that we want to put on the view plate
+    public void renderDatabase(ArrayList<String> dataBaseData) {
+        if (dataBaseData == null) {
+            return;
+        }
+
+        this.getItems().clear();
+
+        for (String data : dataBaseData) {
+            this.getItems().add(data);
+        }
+    }
+
 }

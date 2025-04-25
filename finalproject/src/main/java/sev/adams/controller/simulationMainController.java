@@ -25,6 +25,8 @@ public class simulationMainController {
     private TablesListView tablesList;
     @FXML
     private Button timeButton;
+    @FXML
+    private Button databaseButton;
     @FXML 
     private EmployeeList employeeList;
     @FXML
@@ -54,6 +56,12 @@ public class simulationMainController {
     @FXML
     public void doTimeButton() {
         model.progressTime();
+    }
+
+    // Open a window with database info
+    @FXML
+    public void doDatabaseButton() {
+        model.renderDatabase();
     }
 
     // A button was pressed in the customerList listview, respond to it by...TODO

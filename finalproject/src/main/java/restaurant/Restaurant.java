@@ -28,6 +28,7 @@ public class Restaurant {
         currCapacity = 0;
         tablesByCapacity = new HashMap<Integer, ArrayList<Table>>();
         waitersToTable = new HashMap<Waiter, ArrayList<Table>>();
+        activeOrders = new ArrayList<Order>();
         db = new Database();
     }
 
@@ -258,9 +259,7 @@ public class Restaurant {
 
     // This one just takes an already created order
     public void makeOrder(Order order) {
-        Integer newNumber = db.getOrders().size() + 1;
-        Order newOrder = new Order(order, newNumber);
-        activeOrders.add(newOrder);
+        activeOrders.add(order);
     }
 
     /* Do this when we have received payment. Here we add the order to the 
@@ -286,5 +285,21 @@ public class Restaurant {
         }
 
         return employeeStrings;
+    }
+
+    // Sorry matteo, im bypassing your way of doing tips unless we have more time
+    //  register a general tip that is not assigned to any one waiter
+    public void registerGeneralTip(double tipAmount) {
+        db.registerGeneralTip(tipAmount);
+    }
+
+    // Get all of the database information in string format
+    public ArrayList<String> getDatabaseInfoInString() {
+        return db.getStringData();
+    }
+
+    // Pay the salaries of all employees
+    public void payAllEmployees() {
+        db.paySalaries();
     }
 }

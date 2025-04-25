@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 
 import restaurant.Customer;
 import restaurant.CustomerGroup;
+import restaurant.Order;
 import restaurant.Restaurant;
 import restaurant.Staff;
 import restaurant.StaffType;
@@ -211,6 +212,11 @@ public class simulationMainModel {
         if (Math.random() < customerFrequency) {
             this.newCustomerGroup();
         }
+
+        // Every 7 time units all employees get paid out their salary
+        if (currentTime % 7 == 0) {
+            restaurant.payAllEmployees();
+        }
     }
     
     // Add a new customerGroup and let the customersList know
@@ -264,6 +270,11 @@ public class simulationMainModel {
             return;
         }
 
+        // Set up the orders with the restaurants database
+        for (Order order : relevantCustomerGroup.getOrders()) {
+            restaurant.makeOrder(order);
+        }
+
         // Now the information is sorted in the model, we need to let observers know so we can update info on the view
         notifyTableViewObserverOfAssignedCustomerGroup(assignedTable, relevantCustomerGroup.getID());
         notifyCustomerViewObserverOfAssignedCustomerGroup(assignedTable, relevantCustomerGroup.getID());
@@ -271,13 +282,22 @@ public class simulationMainModel {
     }
 
     // Remove the customerGroup with customerGroupID from our restaurant representation
+    //  Doing this also closes the order with the restaurant
     // @pre There is a customerGroup with customerGroupID in our representation
     // assignedTableID is allowed to be null, that just means this group didn't have an assignedTableID
     public void removeCustomerGroup(String customerGroupID, String assignedTableID) {
         // First remove the customerGroup from our representation
         for (CustomerGroup thisGroup : customerGroups) {
-            if (thisGroup.getID() == customerGroupID) {
+            if (thisGroup.getID().equals(customerGroupID)) {
                 // Found the customerGroup that we want to remove
+                // Close all the customer's orders
+                for (Order order : thisGroup.getOrders()) {
+                    restaurant.closeOrder(order);
+                }
+                // Register the tips given
+                // TODO: If we have time make this consider a specific waiter to give the tips to
+                restaurant.registerGeneralTip(thisGroup.getTip());
+
                 customerGroups.remove(thisGroup);
                 break;
             }
@@ -309,6 +329,13 @@ public class simulationMainModel {
         // Let the TableInfoListView that it is time to render
         //  And give it what it needs to render
         notifyTableInfoListObserverRenderTable(tableToRender, customerGroupToRender);
+    }
+
+    // We hijack the TableInfoListView to show database info, simply telling the TableInfoListView what to render from the database
+    public void renderDatabase() {
+        ArrayList<String> dataBaseData = restaurant.getDatabaseInfoInString();
+
+        notifyTableInfoListViewRenderDatabase(dataBaseData);
     }
 
     //////////////////////////////////////////////////////////////
@@ -383,5 +410,9 @@ public class simulationMainModel {
     // Give the EmployeeListView a new list of all the employee strings it needs to display
     private void notifyEmployeeListAllEmployees() {
         employeeListObserver.renderEmployees(restaurant.getAllEmployeeStrings());
+    }
+
+    private void notifyTableInfoListViewRenderDatabase(ArrayList<String> dataBaseData) {
+        tableInfoListObserver.renderDatabase(dataBaseData);
     }
 }
