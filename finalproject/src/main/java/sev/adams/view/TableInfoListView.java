@@ -25,17 +25,19 @@ public class TableInfoListView extends ListView<String>{
         // Only do this stuff if we have a customerGroup
         if (customerGroup != null) {
             this.getItems().add("Assigned Customer Group ID: " + customerGroup.getID());
+            this.getItems().add("Seated Customers: " + customerGroup.numCustomers() + " People");
             this.getItems().add("Individual Customer Orders:");
             // Print out all the orders for each customer
             ArrayList<Order> orders = customerGroup.getOrders();
             if (orders != null) {
                 for (Order order : orders) {
-                    this.getItems().add("   " + order.toString());
+                    this.getItems().add(order.toString());
                 }
             }
             // Print out the total bill for this group
             this.getItems().add("");
             this.getItems().add("Total Bill: $" + String.format("%.2f", customerGroup.getBill()));
+            this.getItems().add("Total Tips: $" + String.format("%.2f", customerGroup.getTip()));
         }
         
     }
