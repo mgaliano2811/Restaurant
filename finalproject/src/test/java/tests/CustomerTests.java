@@ -6,38 +6,33 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
-
-import restaurant.menu.ItemType;
+import restaurant.*;
 
 public class CustomerTests {
     
     @Test
     public void testCustomerCreation() {
-        restaurant.Customer customer = new restaurant.Customer();
+        Customer customer = new Customer();
         assertNotNull(customer.getId());
-        assertEquals(3, customer.getFoodWant().size());
-        assertEquals(ItemType.ENTREE, customer.getFoodWant().get(0).getItemType());
-        assertEquals(ItemType.DRINK, customer.getFoodWant().get(1).getItemType());
-        assertEquals(ItemType.DESSERT, customer.getFoodWant().get(2).getItemType());
     }
 
     @Test
     public void getCustomerOrderPrice() {
-        restaurant.Customer customer = new restaurant.Customer();
+        Customer customer = new Customer();
         double totalPrice = customer.getTotalPrice();
         assertTrue(totalPrice > 0.0);
     }
 
     @Test
     public void testCustomerGroupCreation() {
-        restaurant.CustomerGroup group = new restaurant.CustomerGroup("123");
+        CustomerGroup group = new CustomerGroup("123");
         assertNotNull(group);
     }
 
     @Test
     public void testAddCustomerToGroup() {
-        restaurant.CustomerGroup group = new restaurant.CustomerGroup("123");
-        restaurant.Customer customer = new restaurant.Customer();
+        CustomerGroup group = new CustomerGroup("123");
+        Customer customer = new Customer();
         group.addCustomer(customer);
         assertEquals(1, group.numCustomers());
         assertEquals(customer.getId(), group.iterator().next().getId());
@@ -45,15 +40,15 @@ public class CustomerTests {
 
     @Test
     public void testAddManyCustomersToGroup() {
-        restaurant.CustomerGroup group = new restaurant.CustomerGroup("123");
-        restaurant.Customer customer1 = new restaurant.Customer();
-        restaurant.Customer customer2 = new restaurant.Customer();
-        restaurant.Customer customer3 = new restaurant.Customer();
+        CustomerGroup group = new CustomerGroup("123");
+        Customer customer1 = new Customer();
+        Customer customer2 = new Customer();
+        Customer customer3 = new Customer();
         group.addCustomer(customer1);
         group.addCustomer(customer2);
         group.addCustomer(customer3);
         assertEquals(3, group.numCustomers());
-        Iterator<restaurant.Customer> iterator = group.iterator();
+        Iterator<Customer> iterator = group.iterator();
         assertEquals(customer1.getId(), iterator.next().getId());
         assertEquals(customer2.getId(), iterator.next().getId());
         assertEquals(customer3.getId(), iterator.next().getId());

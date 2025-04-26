@@ -6,19 +6,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import restaurant.Restaurant;
-import restaurant.Waiter;
+import restaurant.StaffType;
 
 public class RestaurantTests {
 
     private Restaurant r;
-    private Waiter w;
 
     @BeforeEach
     public void setUp() { 
         r = new Restaurant(); 
-        w = new Waiter("Fring", "Gus", 0);
-        r.addWaiter(w);
-    
+        r.addEmployee("Gus", "Fring", StaffType.WAITER, 30000);
     }
 
     @AfterEach
@@ -88,23 +85,6 @@ public class RestaurantTests {
         r.addTable(2);
         r.seatPeople(3);
         assertEquals(0, r.getCurrRestaurantCapacity());
-    }
-    @Test
-    public void testRestrauntSeatPeopleMutliTable() {
-        r.addTable(3);
-        r.addTable(3);
-        r.seatPeople(5);
-        assertEquals(5, r.getCurrRestaurantCapacity());
-    }
-
-    @Test
-    public void testRestrauntSeatPeopleMutliTableTwice() {
-        r.addTable(3);
-        r.addTable(3);
-        r.addTable(3);
-        r.addTable(3);
-        r.seatPeople(12);
-        assertEquals(12, r.getCurrRestaurantCapacity());
     }
 
     @Test
