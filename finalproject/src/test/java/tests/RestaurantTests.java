@@ -2,6 +2,10 @@ package tests;
 
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -86,6 +90,13 @@ public class RestaurantTests {
         r.seatPeople(3);
         assertEquals(0, r.getCurrRestaurantCapacity());
     }
+    @Test
+    public void testRestrauntSeatPeopleMutliTable() {
+        r.addTable(3);
+        r.addTable(3);
+        r.seatPeople(5);
+        assertEquals(0, r.getCurrRestaurantCapacity());
+    }
 
     @Test
     public void testRestrauntSeatPeopleMutliTableError() {
@@ -121,5 +132,18 @@ public class RestaurantTests {
         assertEquals(false, r.tableOccupied(tableNumber));
         r.freeTable(tableNumber + 1);
         assertEquals(false, r.tableOccupied(tableNumber));
+    }
+
+    @Test
+    public void testRegisterGeneralTip() {
+        r.registerGeneralTip(50.5);
+        ArrayList<String> info = r.getDatabaseInfoInString();
+        assertEquals("Total Money Made from Tips: $50,50", info.get(2));
+    }
+
+    @Test
+    public void testOrder() {
+        List<String> before = r.getDatabaseInfoInString();
+        assertEquals("Total Orders Taken: 0 Orders", before.get(0));
     }
 }
