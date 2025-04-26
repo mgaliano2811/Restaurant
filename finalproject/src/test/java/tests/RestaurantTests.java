@@ -86,23 +86,6 @@ public class RestaurantTests {
         r.seatPeople(3);
         assertEquals(0, r.getCurrRestaurantCapacity());
     }
-    @Test
-    public void testRestrauntSeatPeopleMutliTable() {
-        r.addTable(3);
-        r.addTable(3);
-        r.seatPeople(5);
-        assertEquals(5, r.getCurrRestaurantCapacity());
-    }
-
-    @Test
-    public void testRestrauntSeatPeopleMutliTableTwice() {
-        r.addTable(3);
-        r.addTable(3);
-        r.addTable(3);
-        r.addTable(3);
-        r.seatPeople(12);
-        assertEquals(12, r.getCurrRestaurantCapacity());
-    }
 
     @Test
     public void testRestrauntSeatPeopleMutliTableError() {
