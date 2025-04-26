@@ -52,7 +52,6 @@ public class Order {
         for (MenuItem item : orderItems) {
             returnString += item.toString() + "\n";
         }
-
         return returnString;
     }
 

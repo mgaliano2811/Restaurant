@@ -11,7 +11,7 @@ import restaurant.*;
 public class CustomerTests {
     
     @Test
-    public void testCustomerCreation() {
+    public void testCustomerCreationAndGetters() {
         Customer customer = new Customer();
         assertNotNull(customer.getId());
     }
