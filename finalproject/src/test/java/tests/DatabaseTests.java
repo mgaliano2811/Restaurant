@@ -172,6 +172,7 @@ public class DatabaseTests {
         Waiter w = (Waiter) db.addEmployee("Tip", "Master", StaffType.WAITER, 1000.0);
         db.recordTip(w.getEmloyeeID(), 20.0);
         db.registerGeneralTip(30.0);
+        db.paySalaries();
 
         ArrayList<String> data1 = db.getStringData();
         assertEquals("Total Money Made from Tips: $50,00",   data1.get(2));  // 20 + 30

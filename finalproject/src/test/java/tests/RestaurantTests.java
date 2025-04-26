@@ -95,7 +95,7 @@ public class RestaurantTests {
     }
 
     @Test
-    public void testRestrauntSeatPeopleMutliTableTwice() {
+    public void testRestaurantSeatPeopleMutliTableTwice() {
         r.addTable(3);
         r.addTable(3);
         r.addTable(3);

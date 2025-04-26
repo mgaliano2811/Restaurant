@@ -92,7 +92,8 @@ public class Database {
         else return null;
     }
 
-    public double getTotalPayroll() { return payroll.totalPayrollExpense(); }
+    // Get salaries that we need to pay each 'month'
+    public double getTotalPayroll() { return payroll.totalSalariesExpense(); }
 
     public void updateSalary(int ID, double newSalary) { 
         if (validateInputID(ID))

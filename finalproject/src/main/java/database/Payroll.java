@@ -74,6 +74,15 @@ import restaurant.*;
     public double totalPayrollExpense() {
         double total = 0;
         for (PayrollRecord record: payrollRecords.values()) {
+            total += record.getAllTimeEarnings();
+        }
+        return total;
+    }
+
+    // Calculates the total amount paid to all the employees during this run
+    public double totalSalariesExpense() {
+        double total = 0;
+        for (PayrollRecord record: payrollRecords.values()) {
             total += record.getSalary();
         }
         return total;
@@ -85,7 +94,6 @@ import restaurant.*;
         for (PayrollRecord record : payrollRecords.values()) {
             totalTips += record.getTips();
         }
-
         return totalTips;
     }
     
