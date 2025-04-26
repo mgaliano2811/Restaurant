@@ -65,7 +65,7 @@ public class Menu {
         ArrayList<MenuItem> possibleMenuItems = new ArrayList<MenuItem>(filteredMenu.values());
         // Get a random menuItem from the values
         Random random = new Random();
-        MenuItem chosenMenuItem = possibleMenuItems.get(random.nextInt(possibleMenuItems.size()));
+        MenuItem chosenMenuItem = possibleMenuItems.get(random.nextInt(possibleMenuItems.size()-1));
         return chosenMenuItem;
     }
     

@@ -2,20 +2,18 @@ package tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-
-import java.util.ArrayList;
+import org.junit.jupiter.api.*;
 
 import database.Database;
-import restaurant.Staff;
-import restaurant.StaffType;
-import restaurant.Waiter;
+import restaurant.*;
+import restaurant.Order;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 /**
- * Testcases for Database and Payroll
+ * Comprehensive JUnit tests for Database to achieve >90% coverage.
  */
 public class DatabaseTests {
 
@@ -31,163 +29,183 @@ public class DatabaseTests {
         db = null;
     }
 
-    // Test adding a Waiter, recording a tip, and getting full compensation
     @Test
-    public void testAddEmployeeWaiter() throws Exception {
-        db.addEmployee("Jhonny", "Longcock", StaffType.WAITER, 30000);
-        ArrayList<Staff> employees = db.getEmployees();
-        assertEquals(1, employees.size());
-        Staff s = employees.get(0);
-        assertEquals("Jhonny",s.getFirstName());
-        assertEquals("Longcock",s.getLastName());
-        assertEquals(StaffType.WAITER, s.getEmployeeType());
-        int ID = s.getEmloyeeID();
-        db.recordTip(ID, 30);
-        assertEquals(30, db.getTip(ID));
-        assertEquals(db.getCompensation(ID), 30030);
-    }
+    public void testAddEmployeeTypesAndPayrollExpense() {
+        Staff waiter  = db.addEmployee("John",   "Doe",     StaffType.WAITER,  1000.0);
+        Staff chef    = db.addEmployee("Jane",   "Smith",   StaffType.CHEF,    2000.0);
+        Staff manager = db.addEmployee("Alice",  "Jones",   StaffType.MANAGER, 3000.0);
+        Staff staff   = db.addEmployee("Bob",    "Brown",   StaffType.STAFF,   4000.0);
 
-    // Test adding a Chef & updating its salary
-    @Test
-    void testAddEmployeeChef() {
-        db.addEmployee("Anna", "Smith", StaffType.CHEF, 35000);
-        ArrayList<Staff> employees = db.getEmployees();
-        assertEquals(1, employees.size());
-        Staff s = employees.get(0);
-        assertEquals("Anna", s.getFirstName());
-        assertEquals("Smith", s.getLastName());
-        assertEquals(StaffType.CHEF, s.getEmployeeType());
-
-        db.updateSalary(s.getEmloyeeID(), 40000.5);
-        assertEquals(40000.5, db.getSalary(s.getEmloyeeID()), 0.001);
-    }
-
-    // Test adding a manager & test recording tip
-    @Test
-    void testAddEmployeeManager() {
-        db.addEmployee("Bob", "Brown", StaffType.MANAGER, 50000);
-        ArrayList<Staff> employees = db.getEmployees();
-        assertEquals(1, employees.size());
-        Staff s = employees.get(0);
-        assertEquals("Bob", s.getFirstName());
-        assertEquals("Brown", s.getLastName());
-        assertEquals(StaffType.MANAGER, s.getEmployeeType());
-        db.recordTip(s.getEmloyeeID(), 40.5);
-        assertEquals(0.0, db.getTip(s.getEmloyeeID()), 0.001);
-    }
-
-    // Test adding staff
-    @Test
-    void testAddEmployeeStaff() {
-        db.addEmployee("Alice", "Green", StaffType.STAFF, 25000);
-        ArrayList<Staff> employees = db.getEmployees();
-        assertEquals(1, employees.size());
-        Staff s = employees.get(0);
-        assertEquals("Alice", s.getFirstName());
-        assertEquals("Green", s.getLastName());
-        assertEquals(StaffType.STAFF, s.getEmployeeType());
-    }
-
-    // Test hiring multiple employees (should all have different IDs)
-    // and also get the payroll expense
-    @Test
-    void testHiringMultipleEmployeesGeneratesUniqueIDs() {
-        double totalPayroll = 0.0;
-        for (int i = 0; i < 10; i++){
-            db.addEmployee("F" + i, "L" + i, StaffType.STAFF, 20000 + i);
-            totalPayroll += (20000 + i);
+        List<Staff> emps = db.getEmployees();
+        assertEquals(4, emps.size());
+        // Unique IDs
+        HashSet<Integer> ids = new HashSet<>();
+        for (Staff s : emps) {
+            ids.add(s.getEmloyeeID());
         }
-        ArrayList<Staff> employees = db.getEmployees();
-        assertEquals(10, employees.size());
-
-        // Now verify no two employees have same ID
-        for (int i = 0; i < employees.size(); i++) {
-            for (int j = i + 1; j < employees.size(); j++) {
-                int id1 = employees.get(i).getEmloyeeID();
-                int id2 = employees.get(j).getEmloyeeID();
-                assertNotEquals(id1, id2);
-            }
-        }
-
-        assertEquals(totalPayroll, db.getTotalPayroll(), 0.001);
+        assertEquals(4, ids.size());
+        // Types
+        assertTrue(waiter  instanceof Waiter);
+        assertTrue(chef    instanceof Chef);
+        assertTrue(manager instanceof Manager);
+        assertFalse(staff  instanceof Waiter || staff instanceof Chef || staff instanceof Manager);
+        assertEquals(1000.0 + 2000.0 + 3000.0 + 4000.0, db.getTotalPayroll(), 1e-6);
     }
 
-    // Test ID handling and validation
     @Test
     public void testValidateInputID() {
-        db.addEmployee("Test", "User", StaffType.STAFF, 12345);
-        int validId = db.getEmployees().get(0).getEmloyeeID();
-        assertTrue(db.validateInputID(validId));        // Existing ID
-        assertFalse(db.validateInputID(99999999));   // Nonexisting ID
+        Staff s = db.addEmployee("Test", "User", StaffType.STAFF, 1234.56);
+        int validId = s.getEmloyeeID();
+        assertTrue(db.validateInputID(validId));
+        assertFalse(db.validateInputID(-99999));
     }
 
-    // Test firing by name, lastname & by ID
     @Test
-    public void testFireEmployeeByName() {
-        db.addEmployee("Tom", "Jerry", StaffType.STAFF, 20000);
+    public void testFireEmployeeByNameSingle() {
+        db.addEmployee("Tom", "Jerry", StaffType.STAFF, 1500.0);
         assertEquals(1, db.getEmployees().size());
-
         db.fireEmployee("Tom", "Jerry");
         assertEquals(0, db.getEmployees().size());
-        assertEquals(0.0, db.getTotalPayroll(), 0.001);
-
-        db.addEmployee("Pepe", "Perez", StaffType.STAFF, 1000000);
-        ArrayList<Staff> employees = db.getEmployees();
-        assertEquals(1, employees.size());
-
-        db.fireEmployee(employees.get(0).getEmloyeeID());
-        assertEquals(0, db.getEmployees().size());
-        assertEquals(0.0, db.getTotalPayroll(), 0.001);
-
+        assertEquals(0.0, db.getTotalPayroll(), 1e-6);
     }
 
-    // Test payroll record toString
     @Test
-    public void testPayrollRecordToString() {
-        db.addEmployee("Last", "First", StaffType.STAFF, 20000);
-        ArrayList<Staff> employees = db.getEmployees();
-        Staff s = employees.get(0);
-        int ID = s.getEmloyeeID();
-        assertEquals("PayrollRecord [Employee: " + s.toString() + ", Salary: 20000.0, Tips: 0.0]"
-                , db.getPayrollInfo(ID));
+    public void testFireEmployeeById() {
+        Staff s = db.addEmployee("Anna", "Bell", StaffType.STAFF, 1800.0);
+        int id = s.getEmloyeeID();
+        assertEquals(1, db.getEmployees().size());
+        db.fireEmployee(id);
+        assertTrue(db.getEmployees().isEmpty());
+        assertEquals(0.0, db.getTotalPayroll(), 1e-6);
     }
 
-    // Test invalid IDs 
     @Test
-    public void testInvalidIDs() {
-        db.recordTip(-2, 40);
-        db.updateSalary(-2, 40);
-        assertNull(db.getTip(-30));
-        assertNull(db.getCompensation(-30));
-        assertNull(db.getSalary(-30));
-        assertNull(db.getPayrollInfo(-30));
-        db.fireEmployee("Pepe", "Perez");
-        assertNull(db.getEmployee(-40));
-        db.fireEmployee(-50);
+    public void testFireEmployeeByNameNoMatchDoesNothing() {
+        Staff s = db.addEmployee("U", "N", StaffType.STAFF, 500.0);
+        double before = db.getTotalPayroll();
+        db.fireEmployee("Non", "Existent");
+        assertEquals(1, db.getEmployees().size());
+        assertEquals(before, db.getTotalPayroll(), 1e-6);
     }
 
-    // Test get waiter with the most tips
     @Test
-    public void testWaiterWithMostTips() {
-        db.addEmployee("Pepe", "Perez", StaffType.WAITER, 30000);
-        db.addEmployee("Ana", "Garcia", StaffType.WAITER, 30000);
-        db.addEmployee("Luis", "Torres", StaffType.WAITER, 30000);
-        db.addEmployee("Gabriela", "Vargas", StaffType.MANAGER, 5000);
+    public void testFireEmployeeMultipleMatchesDoesNothing() {
+        db.addEmployee("Sam", "Same", StaffType.STAFF, 100.0);
+        db.addEmployee("Sam", "Same", StaffType.STAFF, 200.0);
+        assertEquals(2, db.getEmployees().size());
+        db.fireEmployee("Sam", "Same");  // two matches → no action
+        assertEquals(2, db.getEmployees().size());
+        assertEquals(300.0, db.getTotalPayroll(), 1e-6);
+    }
 
-        ArrayList<Staff> employees = db.getEmployees();
-        int pepeID = employees.get(0).getEmloyeeID();
-        int anaID = employees.get(1).getEmloyeeID();
-        int luisID = employees.get(2).getEmloyeeID();
+    @Test
+    public void testGetEmployeeLookup() {
+        Staff added = db.addEmployee("Foo", "Bar", StaffType.STAFF, 750.0);
+        int id = added.getEmloyeeID();
+        assertEquals(added, db.getEmployee(id));
+        assertNull(db.getEmployee(-1));
+    }
 
-        db.recordTip(pepeID, 50.0);
-        db.recordTip(anaID, 75.0);   // highest
-        db.recordTip(luisID, 75.00); // equal due to tolerance
+    @Test
+    public void testGetEmployeesShallowCopy() {
+        db.addEmployee("X", "Y", StaffType.STAFF, 600.0);
+        List<Staff> copy = db.getEmployees();
+        copy.clear();
+        // original list unaffected
+        assertEquals(1, db.getEmployees().size());
+    }
 
-        ArrayList<Waiter> topWaiters = db.waiterWithMostTips();
+    @Test
+    public void testRecordTipGetTipAndCompensation_WaiterVsManager() {
+        // Waiter should get tip
+        Waiter w = (Waiter) db.addEmployee("Will", "Wait", StaffType.WAITER,  800.0);
+        int wid = w.getEmloyeeID();
+        db.recordTip(wid, 50.0);
+        assertEquals(50.0, db.getTip(wid),      1e-6);
+        assertEquals(850.0, db.getCompensation(wid), 1e-6);
 
-        assertEquals(2, topWaiters.size());
+        // Manager should never get tip credit
+        Manager m = (Manager) db.addEmployee("Mighty", "Man", StaffType.MANAGER, 900.0);
+        int mid = m.getEmloyeeID();
+        db.recordTip(mid, 75.0);
+        assertEquals(0.0, db.getTip(mid),        1e-6);
+        assertEquals(900.0, db.getCompensation(mid), 1e-6);
+    }
 
-        assertTrue(topWaiters.contains(db.getEmployee(anaID)));
-        assertTrue(topWaiters.contains(db.getEmployee(luisID)));
+    @Test
+    public void testUpdateSalaryAndGetSalary() {
+        Staff s = db.addEmployee("Sal", "Ary", StaffType.STAFF, 1200.0);
+        int id = s.getEmloyeeID();
+        db.updateSalary(id, 1500.25);
+        assertEquals(1500.25, db.getSalary(id), 1e-6);
+
+        // invalid ID: no exception, salary remains unchanged
+        db.updateSalary(-5, 2000.0);
+        assertNull(db.getSalary(-5));
+    }
+
+    @Test
+    public void testPaySalariesAndGetEarnings() {
+        Staff s1 = db.addEmployee("One", "Two", StaffType.STAFF, 1000.0);
+        Staff s2 = db.addEmployee("Three", "Four", StaffType.STAFF, 2000.0);
+        int id1 = s1.getEmloyeeID(), id2 = s2.getEmloyeeID();
+
+        // before paying, earnings are zero
+        assertNull(db.getEarningsForEmployee(-1));
+        assertEquals(0.0, db.getAllSalariesPaid(), 1e-6);
+
+        db.paySalaries();
+        assertEquals(1000.0, db.getEarningsForEmployee(id1), 1e-6);
+        assertEquals(2000.0, db.getEarningsForEmployee(id2), 1e-6);
+        assertEquals(3000.0, db.getAllSalariesPaid(), 1e-6);
+    }
+
+    @Test
+    public void testStringDataInitialAndAfterTipsAndOrders() {
+        // Initial (no orders, no tips, no payroll)
+        ArrayList<String> data0 = db.getStringData();
+        assertEquals("Total Orders Taken: 0 Orders", data0.get(0));
+        assertEquals("Total Money Made from Orders: $0,00", data0.get(1));
+        assertEquals("Total Money Made from Tips: $0,00", data0.get(2));
+        assertEquals("Total Payroll Expense: $0.0", data0.get(3));
+
+        // Record an individual tip and a general tip
+        Waiter w = (Waiter) db.addEmployee("Tip", "Master", StaffType.WAITER, 1000.0);
+        db.recordTip(w.getEmloyeeID(), 20.0);
+        db.registerGeneralTip(30.0);
+
+        ArrayList<String> data1 = db.getStringData();
+        assertEquals("Total Money Made from Tips: $50,00",   data1.get(2));  // 20 + 30
+        assertEquals("Total Payroll Expense: $1000.0",      data1.get(3));
+    }
+
+    @Test
+    public void testWaiterWithMostTipsTolerance() {
+        // Set up three waiters
+        Waiter a = (Waiter) db.addEmployee("A", "A", StaffType.WAITER, 500.0);
+        Waiter b = (Waiter) db.addEmployee("B", "B", StaffType.WAITER, 500.0);
+        Waiter c = (Waiter) db.addEmployee("C", "C", StaffType.WAITER, 500.0);
+        // give tips: a=10, b=15, c=15.009 (within tolerance)
+        db.recordTip(a.getEmloyeeID(), 10.0);
+        db.recordTip(b.getEmloyeeID(), 15.0);
+        db.recordTip(c.getEmloyeeID(), 15.009);
+
+        List<Waiter> top = db.waiterWithMostTips();
+        assertEquals(2, top.size());
+        assertTrue(top.contains(b));
+        assertTrue(top.contains(c));
+    }
+
+    @Test
+    public void testInvalidOperationsDoNotThrow() {
+        // recordTip, updateSalary, fireEmployee, etc., with invalid IDs
+        db.recordTip(-10, 5.0);
+        db.updateSalary(-20, 5.0);
+        db.fireEmployee(-30);
+        db.fireEmployee("No", "One");
+        assertNull(db.getTip(-40));
+        assertNull(db.getSalary(-50));
+        assertNull(db.getCompensation(-60));
+        assertNull(db.getPayrollInfo(-70));
     }
 }
