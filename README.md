@@ -4,7 +4,7 @@ This will go over the general design of the project in a very simplified manner.
 
 -------
 Restaurant Class
-  The Heart of the program, handles assigning tables, and pretty much everything related to the functionality in the backend. I has the Database class which stores information gained during runtime of the program. The only things that are not in the direct purview of the restaurant are customerGroups, which are their own seperate thing.
+  The Heart of the program, handles assigning tables, and pretty much everything related to the functionality in the backend. It has the Database class which stores information gained during runtime of the program. The only things that are not in the direct purview of the restaurant are customerGroups, which are their own seperate thing. The Database also has a Payroll class, which stores all the information on the salaries and payroll of the restaurant, and also each employee has its own PayrollRecord associated to them.
 
 ------
 Table Class
