@@ -6,19 +6,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import restaurant.Restaurant;
-import restaurant.Waiter;
+import restaurant.StaffType;
 
 public class RestaurantTests {
 
     private Restaurant r;
-    private Waiter w;
 
     @BeforeEach
     public void setUp() { 
         r = new Restaurant(); 
-        w = new Waiter("Fring", "Gus", 0);
-        r.addWaiter(w);
-    
+        r.addEmployee("Gus", "Fring", StaffType.WAITER, 30000);
     }
 
     @AfterEach
